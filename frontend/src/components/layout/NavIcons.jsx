@@ -1,0 +1,52 @@
+export function Icon({ name }) {
+  const icons = {
+    dashboard: (
+      <path d="M4 4h6v6H4V4zm10 0h6v6h-6V4zM4 14h6v6H4v-6zm10 2h6v4h-6v-4z" />
+    ),
+    inventory: (
+      <path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5v-9zM12 12l9-4.5M12 12v9M12 12 3 7.5" />
+    ),
+    vendors: (
+      <path d="M4 10V6l8-3 8 3v4M4 10l8 4 8-4M4 10v8l8 4 8-4v-8" />
+    ),
+    assignment: (
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+    ),
+    maintenance: (
+      <path d="M14.7 6.3a6 6 0 0 0-8.1 8.1L2 19l3 3 4.6-4.6a6 6 0 0 0 8.1-8.1L15 12l-3-3 2.7-2.7z" />
+    ),
+    employees: (
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+    ),
+    tickets: (
+      <path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4V9z" />
+    ),
+    activity: (
+      <path d="M12 8v4l3 2M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z" />
+    ),
+    reports: (
+      <path d="M4 19V9M10 19V5M16 19v-7M22 19V8" />
+    ),
+    search: (
+      <path d="M21 21l-4.3-4.3M10.5 18a7.5 7.5 0 1 0 0-15 7.5 7.5 0 0 0 0 15z" />
+    ),
+    logout: (
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
+    ),
+    box: (
+      <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+    ),
+    check: (
+      <path d="M20 6 9 17l-5-5" />
+    ),
+    wrench: (
+      <path d="M14.7 6.3a6 6 0 0 0-8.1 8.1L2 19l3 3 4.6-4.6a6 6 0 0 0 8.1-8.1L15 12l-3-3 2.7-2.7z" />
+    ),
+  };
+
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      {icons[name]}
+    </svg>
+  );
+}

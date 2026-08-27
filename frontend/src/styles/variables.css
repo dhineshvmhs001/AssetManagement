@@ -1,0 +1,63 @@
+:root,
+[data-theme='light'] {
+  --navy: #1e4063;
+  --teal: #0f6268;
+  --ink: #1f2937;
+  --muted: #6b7280;
+  --line: #e5e7eb;
+  --bg: #e8eaef;
+  --paper: #ffffff;
+  --danger: #991b1b;
+  --ok: #166534;
+  --input-bg: #ffffff;
+  --input-border: #d1d5db;
+  --input-focus: #6366f1;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(15, 23, 42, 0.06);
+  --login-bg: #f3f4f6;
+  --brand-from: #7c3aed;
+  --brand-to: #ec4899;
+  --header-h: 56px;
+  --sidebar-w: 84px;
+  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --frame-bg: #e4e7ee;
+  --shell-bg: #f4f5f8;
+  --shell-shadow: 0 18px 50px rgba(15, 23, 42, 0.12);
+  --card-bg: #ffffff;
+  --card-line: rgba(15, 23, 42, 0.06);
+  --card-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+  --rail-icon: #64748b;
+  --rail-icon-bg: rgba(15, 23, 42, 0.06);
+  --search-bg: #ffffff;
+  --accent: #d946ef;
+  --accent-ink: #ffffff;
+}
+
+[data-theme='dark'] {
+  --navy: #f1f5f9;
+  --teal: #f0b429;
+  --ink: #e8e8e8;
+  --muted: #9ca3af;
+  --line: #2a2a2a;
+  --bg: #111111;
+  --paper: #141414;
+  --danger: #fca5a5;
+  --ok: #86efac;
+  --input-bg: #111111;
+  --input-border: #2e2e2e;
+  --input-focus: #f0b429;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 12px 32px rgba(0, 0, 0, 0.35);
+  --login-bg: #070707;
+  --brand-from: #ffd56a;
+  --brand-to: #c98912;
+  --frame-bg: #111111;
+  --shell-bg: #0a0a0a;
+  --shell-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+  --card-bg: #161616;
+  --card-line: rgba(255, 255, 255, 0.06);
+  --card-shadow: none;
+  --rail-icon: #9ca3af;
+  --rail-icon-bg: rgba(255, 255, 255, 0.06);
+  --search-bg: #161616;
+  --accent: #f0b429;
+  --accent-ink: #1a1408;
+}

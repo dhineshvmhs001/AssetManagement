@@ -1,0 +1,73 @@
+.test-page {
+  min-height: 100svh;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 14px;
+  padding: 24px 16px;
+  text-align: center;
+  background: #000;
+  color: #9ca3af;
+}
+
+.test-hub {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 0 0 12px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(2.6rem, 8vw, 4.6rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  animation: test-hub-pulse 1.4s ease-in-out infinite;
+}
+
+.test-hub-start {
+  color: #fff;
+}
+
+.test-hub-end {
+  display: inline-block;
+  padding: 0.08em 0.18em 0.12em;
+  border-radius: 8px;
+  background: #ffa31a;
+  color: #000;
+}
+
+@keyframes test-hub-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.985);
+    opacity: 0.82;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .test-hub {
+    animation: none;
+  }
+}
+
+.test-status {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.test-status.ok {
+  color: #4ade80;
+}
+
+.test-status.fail {
+  color: #f87171;
+}
+
+.test-error {
+  color: #9ca3af;
+  max-width: 40rem;
+}

@@ -1,0 +1,75 @@
+.dash-head {
+  margin-bottom: 14px;
+}
+
+.dash-head h2 {
+  margin: 0 0 4px;
+  font-size: 20px;
+}
+
+.dash-head p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.dash-error {
+  margin: 0 0 14px;
+  color: var(--danger);
+  font-size: 13px;
+}
+
+/* auto-fit lets the seven tiles wrap on their own down to phone width, so no
+   breakpoint is needed for them. */
+.dash-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.dash-tile {
+  display: grid;
+  gap: 2px;
+  padding: 16px 18px;
+  border: 1px solid var(--card-line);
+  border-left: 3px solid var(--rail-icon);
+  border-radius: 16px;
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+  color: inherit;
+  text-decoration: none;
+}
+
+.dash-tile:hover {
+  border-color: var(--accent);
+}
+
+.dash-tile-n {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.dash-tile-label {
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.dash-tile.t-available {
+  border-left-color: var(--ok);
+}
+
+.dash-tile.t-assigned {
+  border-left-color: var(--accent);
+}
+
+.dash-tile.t-maintenance {
+  border-left-color: #b45309;
+}
+
+.dash-tile.t-damaged,
+.dash-tile.t-lost {
+  border-left-color: var(--danger);
+}
