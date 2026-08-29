@@ -1,0 +1,57 @@
+.ds-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: var(--ds-r-pill);
+  font-size: var(--ds-fs-pill);
+  font-weight: 800;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.ds-pill--upper {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ds-pill__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+}
+
+.ds-tone-success {
+  color: var(--ds-success-d);
+  background: color-mix(in srgb, var(--ds-success) 12%, transparent);
+}
+
+.ds-tone-danger {
+  color: var(--ds-danger-d);
+  background: color-mix(in srgb, var(--ds-danger) 12%, transparent);
+}
+
+.ds-tone-warning {
+  color: var(--ds-warning-d);
+  background: color-mix(in srgb, var(--ds-warning) 16%, transparent);
+}
+
+.ds-tone-info {
+  color: var(--ds-info-d);
+  background: color-mix(in srgb, var(--ds-info) 12%, transparent);
+}
+
+.ds-tone-neutral {
+  color: var(--ds-muted-strong);
+  background: var(--ds-surface);
+}
+
+/* Dark cards need the text lifted off the tint rather than deepened into it. */
+[data-theme='dark'] .ds-tone-success,
+[data-theme='dark'] .ds-tone-danger,
+[data-theme='dark'] .ds-tone-warning,
+[data-theme='dark'] .ds-tone-info {
+  background: color-mix(in srgb, currentColor 16%, transparent);
+}

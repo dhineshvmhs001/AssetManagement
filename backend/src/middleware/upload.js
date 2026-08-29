@@ -128,4 +128,65 @@ function optionalTicketFiles(req, res, next) {
   });
 }
 
-module.exports = { optionalAssetFiles, optionalVendorFiles, optionalEmployeeFiles, optionalTicketFiles };
+const assignmentFiles = upload.fields([{ name: 'documents', maxCount: 8 }]);
+
+function optionalAssignmentFiles(req, res, next) {
+  const type = String(req.headers['content-type'] || '');
+  if (!type.includes('multipart/form-data')) {
+    next();
+    return;
+  }
+  assignmentFiles(req, res, (err) => {
+    if (!err) {
+      next();
+      return;
+    }
+    err.statusCode = err.statusCode || 400;
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      err.message = 'Each file must be 8 MB or smaller';
+    }
+    if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+      err.message = `Up to 8 documents per assignment (extra "${err.field}" file)`;
+    }
+    if (err.code === 'LIMIT_FILE_COUNT') {
+      err.message = 'Too many files: 8 documents per assignment at most';
+    }
+    next(err);
+  });
+}
+
+const maintenanceFiles = upload.fields([{ name: 'photos', maxCount: 8 }]);
+
+function optionalMaintenanceFiles(req, res, next) {
+  const type = String(req.headers['content-type'] || '');
+  if (!type.includes('multipart/form-data')) {
+    next();
+    return;
+  }
+  maintenanceFiles(req, res, (err) => {
+    if (!err) {
+      next();
+      return;
+    }
+    err.statusCode = err.statusCode || 400;
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      err.message = 'Each file must be 8 MB or smaller';
+    }
+    if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+      err.message = `Up to 8 photos per check (extra "${err.field}" file)`;
+    }
+    if (err.code === 'LIMIT_FILE_COUNT') {
+      err.message = 'Too many files: 8 photos per check at most';
+    }
+    next(err);
+  });
+}
+
+module.exports = {
+  optionalAssetFiles,
+  optionalVendorFiles,
+  optionalEmployeeFiles,
+  optionalTicketFiles,
+  optionalAssignmentFiles,
+  optionalMaintenanceFiles,
+};

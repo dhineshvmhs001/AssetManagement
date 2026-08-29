@@ -4,26 +4,28 @@ import { listAssets, exportAssets } from '../../api/assets.api';
 import { isTypingTarget } from '../../keyboard/keys';
 import { useKeyboard } from '../../keyboard/KeyboardProvider';
 import { notify } from '../../ui/notify';
+import {
+  Button,
+  DataTable,
+  EmptyState,
+  Field,
+  Input,
+  PageHeader,
+  FilterRow,
+  Select,
+  StatusPill,
+  statusLabel,
+} from '../../ui';
 
 const EMPTY = { search: '', category: '', status: '', location: '' };
 const PAGE_SIZE = 20;
-
-const COLUMNS = [
-  { key: 'assetCode', label: 'Asset ID' },
-  { key: 'category', label: 'Category' },
-  { key: 'brand', label: 'Brand' },
-  { key: 'model', label: 'Model' },
-  { key: 'serialNumber', label: 'Serial No' },
-  { key: 'status', label: 'Status' },
-  { key: 'employeeName', label: 'Employee' },
-  { key: 'location', label: 'Location' },
-];
 
 const EMPTY_DATA = {
   assets: [],
   total: 0,
   page: 1,
   pages: 1,
+  counts: { total: 0, byStatus: {} },
   filters: { categories: [], statuses: [] },
 };
 
@@ -40,35 +42,39 @@ export default function AssetList() {
   const [sort, setSort] = useState({ key: 'createdAt', dir: 'desc' });
   const [page, setPage] = useState(1);
   const [data, setData] = useState(EMPTY_DATA);
+  const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState(0);
   const [exporting, setExporting] = useState(false);
 
   const params = { ...filters, page, limit: PAGE_SIZE, sort: sort.key, dir: sort.dir };
 
   useEffect(() => {
+    let live = true;
+    setLoading(true);
     listAssets(params).then((res) => {
+      if (!live) {
+        return;
+      }
       if (res.ok) {
         setData(res);
         setSelected(0);
       }
+      setLoading(false);
     });
+    return () => {
+      live = false;
+    };
     // Depends on the individual values, not on `params` — that object is
     // rebuilt every render and would refetch in a loop.
   }, [filters.search, filters.category, filters.status, filters.location, page, sort.key, sort.dir]);
 
   useEffect(() => {
-    document.querySelector('.inv-table tr.is-selected')?.scrollIntoView({ block: 'nearest' });
+    document.querySelector('.ds-table__row.is-active')?.scrollIntoView({ block: 'nearest' });
   }, [selected]);
 
   useEffect(() => {
     function onKey(e) {
-      if (kbd?.helpOpen) {
-        return;
-      }
-      if (isTypingTarget(e.target)) {
-        return;
-      }
-      if (!data.assets.length) {
+      if (kbd?.helpOpen || isTypingTarget(e.target) || !data.assets.length) {
         return;
       }
       if (e.key === 'ArrowDown') {
@@ -98,11 +104,8 @@ export default function AssetList() {
     setPage(1);
   }
 
-  function toggleSort(key) {
-    setSort((prev) => ({
-      key,
-      dir: prev.key === key && prev.dir === 'asc' ? 'desc' : 'asc',
-    }));
+  function clearFilters() {
+    setFilters(EMPTY);
     setPage(1);
   }
 
@@ -111,7 +114,7 @@ export default function AssetList() {
     const url = await exportAssets(params);
     setExporting(false);
     if (!url) {
-      notify.error('Could not export');
+      notify.error('Could not export', 'The filtered set was not returned. Nothing was downloaded.');
       return;
     }
     const a = document.createElement('a');
@@ -119,132 +122,167 @@ export default function AssetList() {
     a.download = 'assets_export.csv';
     a.click();
     URL.revokeObjectURL(url);
+    notify.success('Export downloaded ✓', 'assets_export.csv — the current filters, all pages.');
   }
 
-  const pages = data.pages || 1;
-  const from = data.total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
-  const to = Math.min(page * PAGE_SIZE, data.total);
+  // Counts come from the API, which computes them with the status filter left
+  // out. Showing them in the options means an empty result reads as a real
+  // answer rather than a broken filter. Categories have no counts on the
+  // endpoint, so they get none here — a plausible number is worse than none.
+  const byStatus = data.counts?.byStatus || {};
+  const filtered = Object.values(filters).some(Boolean);
+
+  const COLUMNS = [
+    {
+      key: 'assetCode',
+      label: 'Asset',
+      sortable: true,
+      render: (row) => (
+        <Link className="inv-asset-cell" to={`/inventory/${row.assetCode}`} onClick={(e) => e.stopPropagation()}>
+          <strong className="ds-mono">{row.assetCode}</strong>
+          <span className="ds-mono ds-muted">{row.serialNumber || '—'}</span>
+        </Link>
+      ),
+    },
+    { key: 'category', label: 'Category', sortable: true },
+    { key: 'brand', label: 'Brand', sortable: true },
+    { key: 'model', label: 'Model', sortable: true },
+    {
+      key: 'status',
+      label: 'Status',
+      sortable: true,
+      render: (row) => <StatusPill status={row.status} label={row.statusLabel} />,
+    },
+    { key: 'employeeName', label: 'Employee', sortable: true },
+    { key: 'location', label: 'Location', sortable: true },
+  ];
 
   return (
     <section>
-      <div className="inv-head">
-        <div>
-          <h2>Asset list</h2>
-          <p>Search, filter, then open an asset. Up/down selects a row, Enter opens it. Left/right switches Inventory tabs.</p>
-        </div>
-        <div className="inv-actions">
-          <button type="button" className="btn ghost" onClick={handleExport} disabled={exporting}>
-            {exporting ? 'Exporting…' : 'Export CSV'}
-          </button>
-          <Link className="btn ghost" to="/inventory/import" tabIndex={-1}>
-            Bulk import
-          </Link>
-          <Link className="btn primary" to="/inventory/add" tabIndex={-1}>
-            Add asset
-          </Link>
-        </div>
-      </div>
+      <PageHeader
+        title="Asset list"
+        sub="Up/down selects a row, Enter opens it. Left/right switches Inventory tabs."
+        right={
+          <>
+            <Button variant="ghost" loading={exporting} onClick={handleExport}>
+              {exporting ? 'Exporting…' : 'Export CSV'}
+            </Button>
+            <Button variant="secondary" as={Link} to="/inventory/import">
+              Bulk import
+            </Button>
+            <Button variant="primary" as={Link} to="/inventory/add">
+              Add asset
+            </Button>
+          </>
+        }
+      />
 
-      <div className="inv-toolbar">
-        <input
-          id="inv-list-search"
-          className="inv-search"
-          placeholder="Search asset code, serial, brand…"
-          value={filters.search}
-          onChange={(e) => set('search', e.target.value)}
-        />
-        <select value={filters.category} onChange={(e) => set('category', e.target.value)}>
-          <option value="">All categories</option>
-          {(data.filters?.categories || []).map((item) => (
-            <option key={item} value={item}>
-              {item}
-            </option>
-          ))}
-        </select>
-        <select value={filters.status} onChange={(e) => set('status', e.target.value)}>
-          <option value="">All statuses</option>
-          {(data.filters?.statuses || []).map((item) => (
-            <option key={item} value={item}>
-              {item.replaceAll('_', ' ')}
-            </option>
-          ))}
-        </select>
-        <input
-          className="inv-search"
-          placeholder="Location"
-          value={filters.location}
-          onChange={(e) => set('location', e.target.value)}
-        />
-      </div>
+      <FilterRow>
+        <Field label="Search" style={{ flex: '1 1 240px' }} htmlFor="inv-list-search">
+          <Input
+            id="inv-list-search"
+            placeholder="Asset code, serial, brand…"
+            value={filters.search}
+            onChange={(e) => set('search', e.target.value)}
+          />
+        </Field>
 
-      <div className="inv-table-wrap">
-        <table className="inv-table">
-          <thead>
-            <tr>
-              {COLUMNS.map((col) => (
-                <th
-                  key={col.key}
-                  className={`inv-sortable${sort.key === col.key ? ` sorted-${sort.dir}` : ''}`}
-                  aria-sort={sort.key === col.key ? (sort.dir === 'asc' ? 'ascending' : 'descending') : 'none'}
-                  onClick={() => toggleSort(col.key)}
-                >
-                  {col.label}
-                  <span className="inv-sort-mark">{sort.key === col.key ? (sort.dir === 'asc' ? '▲' : '▼') : ''}</span>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {data.assets.map((asset, index) => (
-              <tr
-                key={asset.id}
-                className={index === selected ? 'is-selected' : undefined}
-                onClick={() => setSelected(index)}
-                onDoubleClick={() => navigate(`/inventory/${asset.assetCode}`)}
-              >
-                <td>
-                  <Link to={`/inventory/${asset.assetCode}`} tabIndex={-1}>
-                    {asset.assetCode}
-                  </Link>
-                </td>
-                <td>{asset.category}</td>
-                <td>{asset.brand}</td>
-                <td>{asset.model || '—'}</td>
-                <td>{asset.serialNumber}</td>
-                <td>
-                  <span className={`st st-${asset.status.toLowerCase()}`}>{asset.statusLabel}</span>
-                </td>
-                <td>{asset.employeeName || '—'}</td>
-                <td>{asset.location || '—'}</td>
-              </tr>
+        <Field label="Category" style={{ flex: '0 1 190px' }}>
+          <Select
+            value={filters.category}
+            onChange={(e) => set('category', e.target.value)}
+            aria-label="Filter by category"
+          >
+            <option value="">All categories</option>
+            {(data.filters?.categories || []).map((item) => (
+              <option key={item} value={item}>
+                {item}
+              </option>
             ))}
-            {!data.assets.length && (
-              <tr>
-                <td colSpan={COLUMNS.length} className="inv-empty">
-                  No assets yet. Add one or bulk import.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+          </Select>
+        </Field>
 
-      <div className="inv-pager">
-        <p className="inv-count">
-          {data.total ? `${from}–${to} of ${data.total} assets` : '0 assets'}
-        </p>
-        <div className="inv-pager-btns">
-          <button type="button" className="btn ghost" disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
-            Previous
-          </button>
-          <span className="inv-muted">
-            Page {page} of {pages}
-          </span>
-          <button type="button" className="btn ghost" disabled={page >= pages} onClick={() => setPage((p) => p + 1)}>
-            Next
-          </button>
-        </div>
-      </div>
+        <Field label="Status" style={{ flex: '0 1 220px' }}>
+          <Select
+            value={filters.status}
+            onChange={(e) => set('status', e.target.value)}
+            aria-label="Filter by status"
+          >
+            <option value="" count={data.counts?.total ?? 0}>
+              All statuses
+            </option>
+            {(data.filters?.statuses || []).map((item) => (
+              <option key={item} value={item} count={byStatus[item] ?? 0}>
+                {statusLabel(item)}
+              </option>
+            ))}
+          </Select>
+        </Field>
+
+        <Field label="Location" style={{ flex: '0 1 190px' }}>
+          <Input
+            placeholder="Any location"
+            value={filters.location}
+            onChange={(e) => set('location', e.target.value)}
+          />
+        </Field>
+
+        {filtered ? (
+          <Button variant="ghost" size="sm" onClick={clearFilters} style={{ marginBottom: 1 }}>
+            Clear
+          </Button>
+        ) : null}
+      </FilterRow>
+
+      <DataTable
+        columns={COLUMNS}
+        rows={data.assets}
+        rowKey={(row) => row.id}
+        activeKey={data.assets[selected]?.id}
+        onRowClick={(row) => navigate(`/inventory/${row.assetCode}`)}
+        loading={loading}
+        pageSize={PAGE_SIZE}
+        alwaysShowPager
+        countLabel="assets"
+        page={page}
+        onPageChange={setPage}
+        total={data.total}
+        sort={sort}
+        onSortChange={(next) => {
+          setSort(next);
+          setPage(1);
+        }}
+        empty={
+          filtered ? (
+            <EmptyState
+              icon="⌕"
+              title="No assets match these filters"
+              sub="The counts beside each status show what is there. Clear the filters to see everything."
+              actions={
+                <Button variant="soft" size="sm" onClick={clearFilters}>
+                  Clear filters
+                </Button>
+              }
+            />
+          ) : (
+            <EmptyState
+              icon="▤"
+              title="No assets yet"
+              sub="Add one, or bring the existing inventory in from a spreadsheet."
+              actions={
+                <>
+                  <Button variant="secondary" size="sm" as={Link} to="/inventory/import">
+                    Bulk import
+                  </Button>
+                  <Button variant="primary" size="sm" as={Link} to="/inventory/add">
+                    Add asset
+                  </Button>
+                </>
+              }
+            />
+          )
+        }
+      />
     </section>
   );
 }

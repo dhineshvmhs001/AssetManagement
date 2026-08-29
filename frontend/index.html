@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-env-skin="default">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/favicon.png" />
@@ -8,12 +8,28 @@
     <script>
       (function () {
         try {
+          var SKINS = ['default', 'mhs', 'nord', 'catppuccin', 'tokyo', 'github', 'linear'];
+          function ok(s) {
+            return SKINS.indexOf(s) !== -1 ? s : '';
+          }
           var cookie = document.cookie.match(/(?:^|; )asset-theme=(light|dark)/);
           var theme =
             (cookie && cookie[1]) ||
             localStorage.getItem('asset-theme') ||
             'light';
           document.documentElement.setAttribute('data-theme', theme);
+
+          var q = new URLSearchParams(location.search).get('skin');
+          if (q === 'reset') {
+            localStorage.removeItem('asset-skin');
+            q = '';
+          }
+          var picked = ok(q);
+          if (picked) {
+            localStorage.setItem('asset-skin', picked);
+          }
+          var fromEnv = ok(document.documentElement.getAttribute('data-env-skin')) || 'default';
+          document.documentElement.setAttribute('data-skin', picked || fromEnv);
         } catch (e) {}
       })();
     </script>

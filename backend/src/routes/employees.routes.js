@@ -8,6 +8,8 @@ const router = express.Router();
 router.use(auth);
 router.get('/', employeesController.list);
 router.get('/options', employeesController.options);
+router.get('/template', employeesController.template);
+router.post('/import', employeesController.importCsv);
 router.post('/', optionalEmployeeFiles, employeesController.create);
 router.patch('/:code', optionalEmployeeFiles, employeesController.update);
 router.get('/:code/files/:kind/:stored', employeesController.file);

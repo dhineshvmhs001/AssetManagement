@@ -5,17 +5,22 @@
   margin-bottom: 18px;
 }
 
-.inv-sub a {
+.inv-sub a,
+.inv-sub button {
   padding: 8px 14px;
+  border: 0;
   border-radius: 999px;
-  font-size: 13px;
+  font: inherit;
+  font-size: 0.8125rem;
   font-weight: 600;
   color: var(--muted);
   background: var(--rail-icon-bg);
   text-decoration: none;
+  cursor: pointer;
 }
 
-.inv-sub a.active {
+.inv-sub a.active,
+.inv-sub button.active {
   color: var(--accent-ink);
   background: var(--accent);
 }
@@ -30,7 +35,7 @@
 
 .inv-head h2 {
   margin: 0 0 4px;
-  font-size: 20px;
+  font-size: 1.25rem;
 }
 
 .inv-head p,
@@ -38,7 +43,7 @@
 .inv-count {
   margin: 0;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .inv-count {
@@ -58,7 +63,7 @@
   padding: 0 14px;
   border-radius: 10px;
   border: 0;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 700;
   cursor: pointer;
   text-decoration: none;
@@ -89,7 +94,7 @@
 
 .inv-search,
 .inv-toolbar select,
-.inv-form input,
+.inv-form input:not([type='checkbox']):not([type='file']),
 .inv-form select {
   height: 40px;
   border: 1px solid var(--card-line);
@@ -97,7 +102,7 @@
   padding: 0 12px;
   background: var(--card-bg);
   color: var(--ink);
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .inv-search {
@@ -111,6 +116,10 @@
   border: 1px solid var(--card-line);
   border-radius: 22px;
   box-shadow: var(--card-shadow);
+}
+
+.inv-table-wrap {
+  overflow: hidden;
 }
 
 .inv-card {
@@ -131,13 +140,13 @@
 
 .inv-card h3 {
   margin: 0 0 12px;
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 
 .inv-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .inv-table th,
@@ -148,8 +157,9 @@
 }
 
 .inv-table th {
-  color: var(--muted);
-  font-size: 11px;
+  color: var(--table-head-ink);
+  background: var(--table-head-bg);
+  font-size: 0.6875rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -167,7 +177,7 @@
   display: inline-block;
   padding: 3px 8px;
   border-radius: 999px;
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 700;
 }
 
@@ -252,7 +262,7 @@
   display: inline-block;
   width: 12px;
   margin-left: 4px;
-  font-size: 9px;
+  font-size: 0.5625rem;
 }
 
 .inv-pager {
@@ -290,7 +300,7 @@
 
 .inv-history li p {
   margin: 4px 0 0;
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .inv-history-top {
@@ -302,7 +312,7 @@
 }
 
 .inv-history-action {
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.03em;
   text-transform: uppercase;
@@ -317,11 +327,11 @@
 
 .inv-form label {
   display: block;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
 }
 
-.inv-form label input,
+.inv-form label input:not([type='checkbox']):not([type='file']),
 .inv-form label select,
 .inv-form label textarea {
   display: block;
@@ -351,7 +361,7 @@
   grid-column: 1 / -1;
   margin: 0;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .inv-error {
@@ -371,7 +381,7 @@
 .inv-file {
   display: grid;
   gap: 6px;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
 }
 
@@ -381,6 +391,80 @@
 
 .inv-span-2 {
   grid-column: 1 / -1;
+}
+
+.ticket-items {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 10px;
+}
+
+.ticket-item-row {
+  display: grid;
+  grid-template-columns: 1fr 7rem auto;
+  gap: 8px;
+  align-items: end;
+}
+
+.ticket-item-row label {
+  margin: 0;
+}
+
+.assign-pick {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 8px;
+}
+
+.assign-pick-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.assign-pick-tools input[type='text'],
+.assign-pick-tools input:not([type='checkbox']) {
+  flex: 1;
+  min-width: 180px;
+}
+
+.assign-all {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.assign-asset-list {
+  max-height: 240px;
+  overflow: auto;
+  border: 1px solid var(--card-line);
+  border-radius: 10px;
+  background: var(--card-bg);
+}
+
+.assign-asset-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--card-line);
+  font-weight: 500;
+  margin: 0;
+}
+
+.assign-asset-row input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  flex-shrink: 0;
+  accent-color: var(--accent);
+}
+
+.assign-asset-row:last-child {
+  border-bottom: 0;
 }
 
 .inv-file-label {
@@ -414,7 +498,7 @@
   border: 1.5px dashed color-mix(in srgb, var(--accent) 45%, var(--card-line));
   background: color-mix(in srgb, var(--accent) 6%, var(--card-bg));
   color: var(--ink);
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
   cursor: pointer;
   text-align: center;
@@ -438,7 +522,7 @@
 }
 
 .inv-drop-title {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 700;
 }
 
@@ -450,7 +534,7 @@
 }
 
 .inv-drop-sub {
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 500;
   color: var(--muted);
 }
@@ -491,7 +575,7 @@
   border-radius: 8px;
   background: var(--rail-icon-bg);
   color: var(--muted);
-  font-size: 10px;
+  font-size: 0.625rem;
   font-weight: 800;
   letter-spacing: 0.04em;
 }
@@ -506,12 +590,12 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .inv-file-meta small {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 
 .inv-file-remove {
@@ -565,7 +649,7 @@
 
 .inv-meta dt {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 700;
   text-transform: uppercase;
 }
@@ -587,7 +671,7 @@
   border: 1px dashed var(--card-line);
   background: var(--card-bg);
   text-align: center;
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--muted);
 }
 
@@ -598,7 +682,7 @@
 }
 
 .inv-sticker-kicker {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -606,7 +690,7 @@
 }
 
 .inv-sticker-code {
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 800;
   color: var(--ink);
   margin-bottom: 6px;
@@ -641,4 +725,25 @@
     grid-template-columns: 1fr;
     flex-direction: column;
   }
+
+  .ticket-item-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Rich first cell of the asset table: code above, serial beneath. */
+.inv-asset-cell {
+  display: grid;
+  gap: 1px;
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+.inv-asset-cell strong {
+  font-weight: 800;
+  color: var(--ds-text-deep);
+}
+
+.inv-asset-cell span {
+  font-size: var(--ds-fs-help);
 }

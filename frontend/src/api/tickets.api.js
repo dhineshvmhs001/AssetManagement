@@ -10,7 +10,7 @@ function sendWithFiles(fields, files, asJson, asForm) {
     if (key === 'attachments' || key === 'documents' || value === undefined || value === null || value === '') {
       return;
     }
-    form.append(key, value);
+    form.append(key, Array.isArray(value) ? JSON.stringify(value) : value);
   });
   attachments.forEach((f) => form.append('attachments', f));
   return asForm(form);
@@ -29,6 +29,10 @@ export function listTickets(params = {}) {
 
 export function getTicketOptions() {
   return get('/tickets/options');
+}
+
+export function decideTicket(code, action) {
+  return post(`/tickets/${encodeURIComponent(code)}/decision`, { action });
 }
 
 export function getTicket(code) {

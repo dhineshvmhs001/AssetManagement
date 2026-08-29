@@ -1,0 +1,142 @@
+.ds-table-wrap {
+  background: var(--card-bg);
+  border: 1px solid var(--card-line);
+  border-radius: var(--ds-r-card);
+  box-shadow: var(--ds-card-shadow);
+  overflow: hidden;
+}
+
+.ds-table-scroll {
+  overflow-x: auto;
+}
+
+.ds-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--ds-fs-body);
+}
+
+/* The gradient goes on the row, not the cells — th backgrounds gradient
+ * unreliably across browsers. */
+.ds-table__headrow {
+  background: var(--table-head-bg);
+}
+
+.ds-table th {
+  padding: 10px 14px;
+  text-align: left;
+  font-size: var(--ds-fs-th);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--table-head-ink);
+  white-space: nowrap;
+}
+
+.ds-table td {
+  padding: 10px 14px;
+  border-top: 1px solid var(--ds-tint-06);
+  color: var(--ink);
+  vertical-align: middle;
+}
+
+.ds-table__sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}
+
+.ds-table__sort-mark {
+  display: inline-block;
+  width: 8px;
+  font-size: 8px;
+  opacity: 0.85;
+}
+
+.ds-table__row {
+  transition: background var(--ds-dur) var(--ds-ease);
+}
+
+.ds-table__row--clickable {
+  cursor: pointer;
+}
+
+.ds-table__row:hover td {
+  background: var(--ds-tint-06);
+}
+
+.ds-table__row.is-active td {
+  background: var(--ds-tint-14);
+}
+
+.ds-table__check {
+  width: 40px;
+  padding-right: 0;
+}
+
+.ds-table__cell--right {
+  text-align: right;
+}
+
+.ds-table__cell--center {
+  text-align: center;
+}
+
+.ds-table__cell--mono {
+  font-family: var(--ds-mono);
+  font-size: 0.94em;
+}
+
+/* Bulk bar only exists while a selection does. */
+.ds-table__bulk {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--ds-tint-10);
+  border-bottom: 1px solid var(--ds-tint-18);
+  font-size: var(--ds-fs-body);
+  font-weight: 600;
+  color: var(--ds-text-deep);
+}
+
+.ds-table__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--ds-tint-06);
+}
+
+.ds-table__count {
+  margin: 0;
+  font-size: var(--ds-fs-help);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.ds-pager {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ds-pager__pos {
+  font-size: var(--ds-fs-help);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.ds-table__empty-cell {
+  padding: 0;
+}

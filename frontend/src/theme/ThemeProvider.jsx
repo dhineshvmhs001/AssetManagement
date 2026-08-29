@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { applySkin, readSkin } from './skin';
 
 const STORAGE_KEY = 'asset-theme';
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
@@ -45,6 +46,10 @@ export function ThemeProvider({ children }) {
     document.documentElement.setAttribute('data-theme', theme);
     persistTheme(theme);
   }, [theme]);
+
+  useEffect(() => {
+    applySkin(readSkin());
+  }, []);
 
   const value = useMemo(
     () => ({

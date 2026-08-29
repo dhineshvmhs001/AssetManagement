@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom';
 import { listAssets } from '../../api/assets.api';
 import './Dashboard.css';
 
-// PRD 7.1 asks for these seven counts, in this order.
+// Counts by status. Pending Pre-Check and Under Maintenance open the
+// Maintenance queue; the rest open the inventory list.
 const TILES = [
   { key: '', label: 'Total' },
   { key: 'AVAILABLE', label: 'Available' },
   { key: 'ASSIGNED', label: 'Assigned' },
-  { key: 'MAINTENANCE', label: 'Under Maintenance' },
+  { key: 'PENDING_PRECHECK', label: 'Pending Pre-Check', to: '/maintenance' },
+  { key: 'MAINTENANCE', label: 'Under Maintenance', to: '/maintenance?tab=repairs' },
   { key: 'DAMAGED', label: 'Damaged' },
   { key: 'LOST', label: 'Lost' },
   { key: 'RETIRED', label: 'Retired / Disposed' },
@@ -46,7 +48,7 @@ export default function Dashboard() {
           <Link
             key={tile.label}
             className={`dash-tile${tile.key ? ` t-${tile.key.toLowerCase()}` : ''}`}
-            to={tile.key ? `/inventory?status=${tile.key}` : '/inventory'}
+            to={tile.to || (tile.key ? `/inventory?status=${tile.key}` : '/inventory')}
           >
             <span className="dash-tile-n">
               {tile.key ? counts.byStatus?.[tile.key] ?? 0 : counts.total ?? 0}

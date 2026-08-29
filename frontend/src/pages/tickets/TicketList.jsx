@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { listTickets } from '../../api/tickets.api';
+import { listTickets, decideTicket } from '../../api/tickets.api';
+import { useAuth } from '../../auth/AuthProvider';
+import { notify } from '../../ui/notify';
 
 const EMPTY = { search: '', status: '' };
 const PAGE_SIZE = 20;
@@ -8,8 +10,7 @@ const PAGE_SIZE = 20;
 const COLUMNS = [
   { key: 'ticketCode', label: 'Ticket ID' },
   { key: 'employeeName', label: 'Employee' },
-  { key: 'category', label: 'Category' },
-  { key: 'quantity', label: 'Qty' },
+  { key: 'itemsLabel', label: 'Requested' },
   { key: 'needDate', label: 'Need date' },
   { key: 'priority', label: 'Priority' },
   { key: 'status', label: 'Status' },
@@ -19,10 +20,13 @@ const EMPTY_DATA = { tickets: [], total: 0, page: 1, pages: 1 };
 
 export default function TicketList() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const isManager = user?.role === 'MANAGER';
   const [filters, setFilters] = useState(EMPTY);
   const [page, setPage] = useState(1);
   const [data, setData] = useState(EMPTY_DATA);
   const [selected, setSelected] = useState(0);
+  const [busy, setBusy] = useState(null);
 
   useEffect(() => {
     listTickets({ ...filters, page, limit: PAGE_SIZE }).then((res) => {
@@ -38,6 +42,24 @@ export default function TicketList() {
     setPage(1);
   }
 
+  async function decide(ticket, action) {
+    setBusy(ticket.id);
+    const data = await decideTicket(ticket.ticketCode, action);
+    setBusy(null);
+    if (!data.ok) {
+      notify.error(data.error || 'Could not update ticket');
+      return;
+    }
+    notify.success(
+      action === 'approve' ? `${ticket.ticketCode} approved` : `${ticket.ticketCode} not approved`,
+    );
+    listTickets({ ...filters, page, limit: PAGE_SIZE }).then((res) => {
+      if (res.ok) {
+        setData(res);
+      }
+    });
+  }
+
   const pages = data.pages || 1;
   const from = data.total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
   const to = Math.min(page * PAGE_SIZE, data.total);
@@ -46,12 +68,18 @@ export default function TicketList() {
     <section>
       <div className="inv-head">
         <div>
-          <h2>Ticket list</h2>
-          <p>HR asset requests. Create the employee first, then raise a ticket.</p>
+          <h2>{isManager ? 'Team tickets' : 'Ticket list'}</h2>
+          <p>
+            {isManager
+              ? 'Requests for people who report to you. Approve or reject here, or use the email links.'
+              : 'HR asset requests. Create the employee first, then raise a ticket.'}
+          </p>
         </div>
-        <Link className="btn primary" to="/tickets/add" tabIndex={-1}>
-          Create ticket
-        </Link>
+        {isManager ? null : (
+          <Link className="btn primary" to="/tickets/add" tabIndex={-1}>
+            Create ticket
+          </Link>
+        )}
       </div>
 
       <div className="inv-toolbar">
@@ -78,6 +106,7 @@ export default function TicketList() {
               {COLUMNS.map((col) => (
                 <th key={col.key}>{col.label}</th>
               ))}
+              {isManager ? <th></th> : null}
             </tr>
           </thead>
           <tbody>
@@ -94,19 +123,52 @@ export default function TicketList() {
                   </Link>
                 </td>
                 <td>{ticket.employeeName || '—'}</td>
-                <td>{ticket.category || '—'}</td>
-                <td>{ticket.quantity ?? '—'}</td>
+                <td>{ticket.itemsLabel || ticket.category || '—'}</td>
                 <td>{ticket.needDate || '—'}</td>
                 <td>{ticket.priorityLabel || ticket.priority || '—'}</td>
                 <td>
                   <span className={`st st-${String(ticket.status || '').toLowerCase()}`}>{ticket.statusLabel}</span>
                 </td>
+                {isManager ? (
+                  <td>
+                    {ticket.canDecide ? (
+                      <span className="inv-actions">
+                        <button
+                          type="button"
+                          className="btn primary"
+                          disabled={busy === ticket.id}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            decide(ticket, 'approve');
+                          }}
+                        >
+                          Approve
+                        </button>
+                        <button
+                          type="button"
+                          className="btn ghost"
+                          disabled={busy === ticket.id}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            decide(ticket, 'reject');
+                          }}
+                        >
+                          Reject
+                        </button>
+                      </span>
+                    ) : (
+                      '—'
+                    )}
+                  </td>
+                ) : null}
               </tr>
             ))}
             {!data.tickets.length && (
               <tr>
-                <td colSpan={COLUMNS.length} className="inv-empty">
-                  No tickets yet. HR creates one after the employee exists.
+                <td colSpan={COLUMNS.length + (isManager ? 1 : 0)} className="inv-empty">
+                  {isManager
+                    ? 'No tickets for your team yet.'
+                    : 'No tickets yet. HR creates one after the employee exists.'}
                 </td>
               </tr>
             )}

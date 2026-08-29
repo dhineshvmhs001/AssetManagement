@@ -1,0 +1,25 @@
+.ds-skel {
+  display: block;
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    var(--ds-tint-06) 25%,
+    var(--ds-tint-14) 50%,
+    var(--ds-tint-06) 75%
+  );
+  background-size: 200% 100%;
+  animation: ds-shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes ds-shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-skel {
+    animation: none;
+    background: var(--ds-tint-10);
+  }
+}

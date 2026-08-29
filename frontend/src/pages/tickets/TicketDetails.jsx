@@ -1,12 +1,19 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { getTicket, getTicketFileUrl } from '../../api/tickets.api';
+import { getTicket, getTicketFileUrl, decideTicket } from '../../api/tickets.api';
+import { useAuth } from '../../auth/AuthProvider';
+import { notify } from '../../ui/notify';
+
+const ASSIGN_ROLES = ['ADMIN', 'ASSET_MANAGER', 'ASSET_TEAM'];
+const ASSIGNABLE = ['WITH_ASSET_MANAGER', 'WITH_ASSET_TEAM'];
 
 export default function TicketDetails() {
   const { code } = useParams();
+  const { user } = useAuth();
   const [ticket, setTicket] = useState(null);
   const [error, setError] = useState(null);
   const [fileUrls, setFileUrls] = useState({});
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     getTicket(code).then((data) => {
@@ -48,6 +55,20 @@ export default function TicketDetails() {
     };
   }, [ticket]);
 
+  async function decide(action) {
+    setBusy(true);
+    const data = await decideTicket(ticket.ticketCode, action);
+    setBusy(false);
+    if (!data.ok) {
+      notify.error(data.error || 'Could not update ticket');
+      return;
+    }
+    setTicket(data.ticket);
+    notify.success(
+      action === 'approve' ? `${ticket.ticketCode} approved` : `${ticket.ticketCode} not approved`,
+    );
+  }
+
   if (error) {
     return <p className="inv-error">{error}</p>;
   }
@@ -62,9 +83,28 @@ export default function TicketDetails() {
           <h2>
             {ticket.ticketCode} · {ticket.employeeName || 'Ticket'}
           </h2>
-          <p>HR request. Manager approval email is not sent yet. Assignment comes next.</p>
+          <p>
+            {user?.role === 'MANAGER'
+              ? 'Request for someone on your team. Approve or reject here; the same action is in the email.'
+              : 'HR request. After the manager approves, Asset Team assigns real stock on Assignment.'}
+          </p>
         </div>
         <div className="inv-head-actions">
+          {ticket.canDecide ? (
+            <>
+              <button type="button" className="btn primary" disabled={busy} onClick={() => decide('approve')}>
+                Approve
+              </button>
+              <button type="button" className="btn ghost" disabled={busy} onClick={() => decide('reject')}>
+                Reject
+              </button>
+            </>
+          ) : null}
+          {ASSIGN_ROLES.includes(user?.role) && ASSIGNABLE.includes(ticket.status) ? (
+            <Link className="btn primary" to={`/assignment?ticket=${encodeURIComponent(ticket.ticketCode)}`}>
+              Assign assets
+            </Link>
+          ) : null}
           <Link className="btn ghost" to="/tickets">
             Back to list
           </Link>
@@ -87,12 +127,14 @@ export default function TicketDetails() {
           <div>
             <dt>Employee</dt>
             <dd>
-              {ticket.employeeCode ? (
+              {ticket.employeeCode && user?.role !== 'MANAGER' ? (
                 <Link to={`/employees/${ticket.employeeCode}`}>
                   {ticket.employeeCode} · {ticket.employeeName}
                 </Link>
               ) : (
-                ticket.employeeName || '—'
+                ticket.employeeCode
+                  ? `${ticket.employeeCode} · ${ticket.employeeName}`
+                  : ticket.employeeName || '—'
               )}
             </dd>
           </div>
@@ -113,12 +155,12 @@ export default function TicketDetails() {
             </dd>
           </div>
           <div>
-            <dt>Asset category</dt>
-            <dd>{ticket.category || '—'}</dd>
-          </div>
-          <div>
-            <dt>Quantity</dt>
-            <dd>{ticket.quantity ?? '—'}</dd>
+            <dt>Requested assets</dt>
+            <dd>
+              {ticket.items?.length
+                ? ticket.items.map((item) => `${item.category} × ${item.quantity}`).join(', ')
+                : ticket.itemsLabel || `${ticket.category || '—'} × ${ticket.quantity ?? '—'}`}
+            </dd>
           </div>
           <div>
             <dt>Priority</dt>
@@ -157,6 +199,14 @@ export default function TicketDetails() {
           <div>
             <dt>Created by</dt>
             <dd>{ticket.createdBy || '—'}</dd>
+          </div>
+          <div>
+            <dt>Allocated assets</dt>
+            <dd>
+              {ticket.allocatedAssets?.length
+                ? ticket.allocatedAssets.map((item) => item.assetCode).join(', ')
+                : '—'}
+            </dd>
           </div>
         </dl>
       </div>

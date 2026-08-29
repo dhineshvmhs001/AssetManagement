@@ -50,9 +50,14 @@ export default function EmployeeList() {
           <h2>Employee list</h2>
           <p>Add the person first. HR tickets and assignment pick from this list.</p>
         </div>
-        <Link className="btn primary" to="/employees/add" tabIndex={-1}>
-          Add employee
-        </Link>
+        <div className="inv-actions">
+          <Link className="btn ghost" to="/employees/import" tabIndex={-1}>
+            Bulk import
+          </Link>
+          <Link className="btn primary" to="/employees/add" tabIndex={-1}>
+            Add employee
+          </Link>
+        </div>
       </div>
 
       <div className="inv-toolbar">

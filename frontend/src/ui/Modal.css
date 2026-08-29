@@ -1,0 +1,118 @@
+.ds-modal__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(23, 8, 45, 0.42);
+  backdrop-filter: blur(3px);
+  animation: ds-fade var(--ds-dur) var(--ds-ease);
+}
+
+.ds-modal {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: calc(100vh - 48px);
+  background: var(--card-bg);
+  border: 1px solid var(--card-line);
+  border-radius: var(--ds-r-shell);
+  box-shadow: var(--ds-card-shadow-lg);
+  overflow: hidden;
+}
+
+.ds-modal__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--ds-tint-06);
+}
+
+.ds-modal__title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--ds-text-deep);
+}
+
+.ds-modal__sub {
+  margin: 3px 0 0;
+  font-size: var(--ds-fs-help);
+  color: var(--ds-muted-strong);
+}
+
+.ds-modal__head-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ds-modal__close {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: var(--ds-r-block);
+  background: var(--ds-surface);
+  color: var(--ds-muted-strong);
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.ds-modal__close:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ds-modal__body {
+  padding: 18px 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.ds-modal__foot {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--ds-tint-06);
+  background: var(--card-bg);
+}
+
+@keyframes ds-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Two-column working surface: scrolling form, pinned reference rail. */
+.ds-worksurface {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 18px;
+  align-items: start;
+}
+
+.ds-worksurface__rail {
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  display: grid;
+  gap: 12px;
+}
+
+@media (max-width: 900px) {
+  .ds-worksurface {
+    grid-template-columns: 1fr;
+  }
+
+  .ds-worksurface__rail {
+    position: static;
+  }
+}

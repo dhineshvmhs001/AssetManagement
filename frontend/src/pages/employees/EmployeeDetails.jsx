@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getEmployee, getEmployeeFileUrl } from '../../api/employees.api';
+import { getAssignmentFileUrl } from '../../api/assignments.api';
 import { listTickets } from '../../api/tickets.api';
 
 export default function EmployeeDetails() {
@@ -29,7 +30,11 @@ export default function EmployeeDetails() {
     if (!employee) {
       return undefined;
     }
-    const paths = (employee.documents || []).map((file) => file.path).filter(Boolean);
+    const docPaths = (employee.documents || []).map((file) => file.path).filter(Boolean);
+    const proofPaths = (employee.holdings || []).flatMap((row) =>
+      (row.documents || []).map((file) => file.path).filter(Boolean),
+    );
+    const paths = [...docPaths, ...proofPaths];
     if (!paths.length) {
       return undefined;
     }
@@ -37,12 +42,15 @@ export default function EmployeeDetails() {
     let live = true;
     const made = [];
     Promise.all(
-      paths.map((path) => getEmployeeFileUrl(path).then((url) => {
-        if (url) {
-          made.push(url);
-        }
-        return [path, url];
-      })),
+      paths.map((path) => {
+        const fetchUrl = path.startsWith('/assignments/') ? getAssignmentFileUrl : getEmployeeFileUrl;
+        return fetchUrl(path).then((url) => {
+          if (url) {
+            made.push(url);
+          }
+          return [path, url];
+        });
+      }),
     ).then((pairs) => {
       if (live) {
         setFileUrls(Object.fromEntries(pairs.filter(([, url]) => url)));
@@ -100,6 +108,14 @@ export default function EmployeeDetails() {
           <div>
             <dt>Email</dt>
             <dd>{employee.email || '—'}</dd>
+          </div>
+          <div>
+            <dt>Login</dt>
+            <dd>
+              {employee.hasLogin
+                ? `Yes — they can sign in with ${employee.email}`
+                : 'No login yet'}
+            </dd>
           </div>
           <div>
             <dt>Mobile</dt>
@@ -162,7 +178,55 @@ export default function EmployeeDetails() {
 
       <div className="inv-card">
         <h3>Current assigned assets</h3>
-        <p className="inv-muted">None yet. This fills after Assignment is built.</p>
+        {employee.holdings?.length ? (
+          <table className="inv-table">
+            <thead>
+              <tr>
+                <th>Assignment</th>
+                <th>Asset</th>
+                <th>Assigned</th>
+                <th>Return by</th>
+                <th>Proof</th>
+              </tr>
+            </thead>
+            <tbody>
+              {employee.holdings.map((row) => (
+                <tr key={row.id}>
+                  <td>{row.assignmentCode}</td>
+                  <td>
+                    <Link to={`/inventory/${row.assetCode}`}>{row.assetCode}</Link>
+                    <div className="inv-muted">
+                      {row.category} · {row.brand} {row.model || ''}
+                    </div>
+                  </td>
+                  <td>{row.assignedAt || '—'}</td>
+                  <td>{row.expectedReturn || '—'}</td>
+                  <td>
+                    {row.documents?.length ? (
+                      <ul className="inv-file-links">
+                        {row.documents.map((file) => (
+                          <li key={file.stored || file.name}>
+                            {fileUrls[file.path] ? (
+                              <a href={fileUrls[file.path]} target="_blank" rel="noreferrer">
+                                {file.name}
+                              </a>
+                            ) : (
+                              file.name
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      '—'
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p className="inv-muted">None yet.</p>
+        )}
       </div>
 
       <div className="inv-card">
@@ -183,7 +247,7 @@ export default function EmployeeDetails() {
                     <Link to={`/tickets/${ticket.ticketCode}`}>{ticket.ticketCode}</Link>
                   </td>
                   <td>
-                    {ticket.category} × {ticket.quantity}
+                    {ticket.itemsLabel || `${ticket.category} × ${ticket.quantity}`}
                   </td>
                   <td>{ticket.statusLabel}</td>
                 </tr>

@@ -4,6 +4,7 @@ import { getEmployeeOptions } from '../../api/employees.api';
 import FilePicker from '../inventory/FilePicker';
 
 export const EMPTY_EMPLOYEE = {
+  employeeCode: '',
   name: '',
   department: '',
   designation: '',
@@ -84,9 +85,19 @@ export default function EmployeeForm({
 
   const managerChoices = options.managers || [];
   const departments = options.departments || FALLBACK_OPTIONS.departments;
+  const idLocked = Boolean(initial?.employeeCode);
 
   function handleSubmit(e) {
     e.preventDefault();
+    if (!idLocked) {
+      const code = String(form.employeeCode || '').trim();
+      if (!code) {
+        return onSubmit(null, 'Employee ID is required');
+      }
+      if (!/^MHS[0-9]+$/i.test(code)) {
+        return onSubmit(null, 'Employee ID must be MHS followed by numbers, like MHS101 (no spaces or dashes)');
+      }
+    }
     if (need('name') && !String(form.name || '').trim()) {
       return onSubmit(null, 'Name is required');
     }
@@ -114,7 +125,11 @@ export default function EmployeeForm({
     if (need('documents') && !documents.length && !existingFiles.documents.length) {
       return onSubmit(null, 'Documents are required');
     }
-    return onSubmit(form, null, { documents });
+    return onSubmit(
+      idLocked ? form : { ...form, employeeCode: String(form.employeeCode || '').trim().toUpperCase() },
+      null,
+      { documents },
+    );
   }
 
   function leave() {
@@ -126,16 +141,26 @@ export default function EmployeeForm({
   return (
     <form className="inv-card inv-form" onSubmit={handleSubmit}>
       <p className="inv-note">
-        Used when HR raises a ticket and when an asset is assigned. Email and mobile must each be unique.
+        Used when HR raises a ticket and when an asset is assigned. Employee ID is MHS plus numbers
+        (example MHS101). It is stored in capitals. Email and mobile must each be unique.
         Manager is picked from the managers list (users with the Manager role). Required when PRODUCTION_MODE is on.
       </p>
 
-      {form.employeeCode ? (
-        <label>
-          <span>Employee ID</span>
-          <input value={form.employeeCode} disabled />
-        </label>
-      ) : null}
+      <label>
+        <span>Employee ID{idLocked ? null : <span className="inv-req"> *</span>}</span>
+        <input
+          value={form.employeeCode || ''}
+          onChange={idLocked ? undefined : (e) => set('employeeCode', e.target.value)}
+          onBlur={
+            idLocked
+              ? undefined
+              : (e) => set('employeeCode', String(e.target.value || '').trim().toUpperCase())
+          }
+          placeholder="MHS101"
+          disabled={idLocked}
+          required={!idLocked}
+        />
+      </label>
       <label>
         <span>Name{star('name')}</span>
         <input value={form.name} onChange={(e) => set('name', e.target.value)} required={need('name')} />

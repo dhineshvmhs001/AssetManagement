@@ -57,3 +57,11 @@ export function updateEmployee(code, fields, files = {}) {
 export function getEmployeeFileUrl(path) {
   return getBlobUrl(path);
 }
+
+export function importEmployees(payload) {
+  return post('/employees/import', payload);
+}
+
+export function getEmployeeTemplate() {
+  return get('/employees/template');
+}

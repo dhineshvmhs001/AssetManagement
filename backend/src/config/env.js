@@ -21,6 +21,15 @@ module.exports = {
   PGUSER: process.env.PGUSER || 'asset',
   PGPASSWORD: process.env.PGPASSWORD || 'asset',
   PGDATABASE: process.env.PGDATABASE || 'Asset_Management',
+  SMTP_HOST: process.env.SMTP_HOST || '',
+  SMTP_PORT: Number(process.env.SMTP_PORT) || 587,
+  SMTP_SECURE: isOn(process.env.SMTP_SECURE),
+  SMTP_USER: process.env.SMTP_USER || '',
+  SMTP_PASS: String(process.env.SMTP_PASS || '').replace(/\s/g, ''),
+  MAIL_FROM: process.env.MAIL_FROM || process.env.SMTP_USER || '',
+  MAIL_FROM_NAME: process.env.MAIL_FROM_NAME || 'Asset Management',
+  EMPLOYEE_LOGIN_PASSWORD: process.env.EMPLOYEE_LOGIN_PASSWORD || 'Asset@123',
+  APP_URL: String(process.env.APP_URL || `http://localhost:${process.env.PORT || 5000}`).replace(/\/$/, ''),
 };
 
 

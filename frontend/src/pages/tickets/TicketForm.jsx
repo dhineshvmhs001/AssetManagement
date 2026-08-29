@@ -5,10 +5,11 @@ import { getTicketOptions } from '../../api/tickets.api';
 import { listEmployees } from '../../api/employees.api';
 import FilePicker from '../inventory/FilePicker';
 
+const EMPTY_ITEM = { category: '', quantity: '1' };
+
 const EMPTY = {
   employeeId: '',
-  category: '',
-  quantity: '1',
+  items: [{ ...EMPTY_ITEM }],
   priority: 'MEDIUM',
   needDate: '',
   remarks: '',
@@ -17,7 +18,7 @@ const EMPTY = {
 const FALLBACK = {
   requiredFields: ['employeeId', 'category'],
   productionMode: false,
-  categories: ['Laptop', 'Monitor', 'Mouse', 'Keyboard', 'Phone'],
+  categories: ['Laptop', 'Monitor', 'Mouse', 'Keyboard', 'Phone', 'Headphone', 'Charger'],
   priorities: ['LOW', 'MEDIUM', 'HIGH'],
 };
 
@@ -66,6 +67,24 @@ export default function TicketForm({ busy, onSubmit, onCancel }) {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
+  function setItem(index, key, value) {
+    setForm((prev) => ({
+      ...prev,
+      items: prev.items.map((item, i) => (i === index ? { ...item, [key]: value } : item)),
+    }));
+  }
+
+  function addItem() {
+    setForm((prev) => ({ ...prev, items: [...prev.items, { ...EMPTY_ITEM }] }));
+  }
+
+  function removeItem(index) {
+    setForm((prev) => ({
+      ...prev,
+      items: prev.items.length === 1 ? prev.items : prev.items.filter((_, i) => i !== index),
+    }));
+  }
+
   function need(key) {
     return (options.requiredFields || []).includes(key);
   }
@@ -81,11 +100,17 @@ export default function TicketForm({ busy, onSubmit, onCancel }) {
     if (need('employeeId') && !form.employeeId) {
       return onSubmit(null, 'Employee is required');
     }
-    if (need('category') && !form.category) {
-      return onSubmit(null, 'Asset category is required');
+    const items = (form.items || [])
+      .map((item) => ({
+        category: String(item.category || '').trim(),
+        quantity: Number(item.quantity),
+      }))
+      .filter((item) => item.category);
+    if (!items.length) {
+      return onSubmit(null, 'Add at least one asset');
     }
-    if (need('quantity') && !String(form.quantity || '').trim()) {
-      return onSubmit(null, 'Quantity is required');
+    if (items.some((item) => !Number.isInteger(item.quantity) || item.quantity < 1)) {
+      return onSubmit(null, 'Quantity must be at least 1');
     }
     if (need('priority') && !form.priority) {
       return onSubmit(null, 'Priority is required');
@@ -96,7 +121,7 @@ export default function TicketForm({ busy, onSubmit, onCancel }) {
     if (need('attachments') && !attachments.length) {
       return onSubmit(null, 'Attachments are required');
     }
-    return onSubmit(form, null, { attachments });
+    return onSubmit({ ...form, items }, null, { attachments });
   }
 
   function leave() {
@@ -111,8 +136,8 @@ export default function TicketForm({ busy, onSubmit, onCancel }) {
   return (
     <form className="inv-card inv-form" onSubmit={handleSubmit}>
       <p className="inv-note">
-        If the person is not in Employee Master, add them first. On save the ticket waits for manager approval.
-        Approval email is not sent yet.
+        If the person is not in Employee Master, add them first. Add one or more assets (laptop, keyboard,
+        mouse…). On save the manager gets an approve/reject email.
       </p>
 
       <label>
@@ -142,28 +167,60 @@ export default function TicketForm({ busy, onSubmit, onCancel }) {
           placeholder="From employee"
         />
       </label>
-      <label>
-        <span>Asset category{star('category')}</span>
-        <select value={form.category} onChange={(e) => set('category', e.target.value)} required={need('category')}>
-          <option value="">Select category</option>
-          {categories.map((item) => (
-            <option key={item} value={item}>
-              {item}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label>
-        <span>Quantity{star('quantity')}</span>
-        <input
-          type="number"
-          min="1"
-          max="99"
-          value={form.quantity}
-          onChange={(e) => set('quantity', e.target.value)}
-          required={need('quantity')}
-        />
-      </label>
+
+      <div className="ticket-items">
+        <span>
+          Requested assets{star('category')}
+        </span>
+        {form.items.map((item, index) => (
+          <div className="ticket-item-row" key={index}>
+            <label>
+              <span>Category</span>
+              <select
+                value={item.category}
+                onChange={(e) => setItem(index, 'category', e.target.value)}
+                required
+              >
+                <option value="">Select category</option>
+                {categories.map((name) => (
+                  <option
+                    key={name}
+                    value={name}
+                    disabled={form.items.some((row, i) => i !== index && row.category === name)}
+                  >
+                    {name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              <span>Qty</span>
+              <input
+                type="number"
+                min="1"
+                max="99"
+                value={item.quantity}
+                onChange={(e) => setItem(index, 'quantity', e.target.value)}
+                required
+              />
+            </label>
+            <button
+              type="button"
+              className="btn ghost"
+              onClick={() => removeItem(index)}
+              disabled={form.items.length === 1}
+            >
+              Remove
+            </button>
+          </div>
+        ))}
+        {form.items.length < categories.length ? (
+          <button type="button" className="btn ghost" onClick={addItem}>
+            Add another asset
+          </button>
+        ) : null}
+      </div>
+
       <label>
         <span>Priority{star('priority')}</span>
         <select value={form.priority} onChange={(e) => set('priority', e.target.value)} required={need('priority')}>

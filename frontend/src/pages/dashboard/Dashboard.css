@@ -4,23 +4,22 @@
 
 .dash-head h2 {
   margin: 0 0 4px;
-  font-size: 20px;
+  font-size: 1.25rem;
 }
 
 .dash-head p {
   margin: 0;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .dash-error {
   margin: 0 0 14px;
   color: var(--danger);
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
-/* auto-fit lets the seven tiles wrap on their own down to phone width, so no
-   breakpoint is needed for them. */
+/* auto-fit lets the tiles wrap on their own down to phone width. */
 .dash-tiles {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -45,14 +44,14 @@
 }
 
 .dash-tile-n {
-  font-size: 26px;
+  font-size: 1.625rem;
   font-weight: 700;
   line-height: 1.1;
 }
 
 .dash-tile-label {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 0.6875rem;
   letter-spacing: 0.03em;
   text-transform: uppercase;
 }
@@ -63,6 +62,10 @@
 
 .dash-tile.t-assigned {
   border-left-color: var(--accent);
+}
+
+.dash-tile.t-pending_precheck {
+  border-left-color: #0f766e;
 }
 
 .dash-tile.t-maintenance {

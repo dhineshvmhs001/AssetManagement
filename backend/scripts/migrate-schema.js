@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const crypto = require('crypto');
 const { query, pool } = require('../src/config/db');
 
 async function migrate() {
@@ -115,6 +116,17 @@ async function migrate() {
   `);
 
   await query(`
+    ALTER TABLE employees
+      ADD COLUMN IF NOT EXISTS user_id UUID REFERENCES users(id)
+  `);
+
+  await query(`
+    CREATE UNIQUE INDEX IF NOT EXISTS employees_user_id_unique
+      ON employees (user_id)
+      WHERE user_id IS NOT NULL
+  `);
+
+  await query(`
     CREATE UNIQUE INDEX IF NOT EXISTS employees_mobile_digits
       ON employees (regexp_replace(mobile, '[^0-9]', '', 'g'))
       WHERE mobile IS NOT NULL AND regexp_replace(mobile, '[^0-9]', '', 'g') <> ''
@@ -170,6 +182,38 @@ async function migrate() {
   `);
 
   await query(`
+    CREATE TABLE IF NOT EXISTS ticket_items (
+      id UUID PRIMARY KEY,
+      ticket_id UUID NOT NULL REFERENCES tickets(id) ON DELETE CASCADE,
+      category TEXT NOT NULL,
+      quantity INTEGER NOT NULL DEFAULT 1,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    )
+  `);
+
+  await query(`
+    CREATE UNIQUE INDEX IF NOT EXISTS ticket_items_ticket_category
+      ON ticket_items (ticket_id, category)
+  `);
+
+  const legacyTickets = await query(`
+    SELECT t.id, t.category, COALESCE(t.quantity, 1) AS quantity
+    FROM tickets t
+    WHERE t.category IS NOT NULL
+      AND t.category <> ''
+      AND NOT EXISTS (
+        SELECT 1 FROM ticket_items ti WHERE ti.ticket_id = t.id
+      )
+  `);
+  for (const row of legacyTickets.rows) {
+    await query(
+      `INSERT INTO ticket_items (id, ticket_id, category, quantity)
+       VALUES ($1, $2, $3, $4)`,
+      [crypto.randomUUID(), row.id, row.category, row.quantity],
+    );
+  }
+
+  await query(`
     CREATE TABLE IF NOT EXISTS asset_assignments (
       id UUID PRIMARY KEY,
       asset_id UUID NOT NULL REFERENCES assets(id),
@@ -188,6 +232,20 @@ async function migrate() {
       return_reason TEXT,
       return_condition TEXT
     )
+  `);
+
+  await query(`ALTER TABLE asset_assignments ADD COLUMN IF NOT EXISTS assignment_code TEXT`);
+  await query(`ALTER TABLE asset_assignments ADD COLUMN IF NOT EXISTS assignment_type TEXT`);
+  await query(`ALTER TABLE asset_assignments ADD COLUMN IF NOT EXISTS documents TEXT`);
+  await query(`
+    CREATE UNIQUE INDEX IF NOT EXISTS asset_assignments_code_unique
+      ON asset_assignments (assignment_code)
+      WHERE assignment_code IS NOT NULL
+  `);
+  await query(`
+    CREATE UNIQUE INDEX IF NOT EXISTS asset_assignments_open_asset
+      ON asset_assignments (asset_id)
+      WHERE returned_at IS NULL
   `);
 
   await query(`
@@ -247,7 +305,7 @@ async function migrate() {
   await query(`CREATE INDEX IF NOT EXISTS tickets_employee_id_idx ON tickets (employee_id)`);
   await query(`CREATE INDEX IF NOT EXISTS activity_log_created_at_idx ON activity_log (created_at DESC)`);
 
-  console.log('Schema ready: users, vendors, assets, employees, tickets, asset_assignments, ticket_assets, maintenance_checks, activity_log');
+  console.log('Schema ready: users, vendors, assets, employees, tickets, ticket_items, asset_assignments, ticket_assets, maintenance_checks, activity_log');
 }
 
 migrate()

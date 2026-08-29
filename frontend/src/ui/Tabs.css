@@ -1,0 +1,39 @@
+.ds-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.ds-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: var(--ds-r-pill);
+  background: var(--ds-surface);
+  color: var(--ds-muted-strong);
+  font-family: inherit;
+  font-size: var(--ds-fs-body);
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background var(--ds-dur) var(--ds-ease), color var(--ds-dur) var(--ds-ease);
+}
+
+.ds-tab:hover {
+  background: var(--ds-tint-10);
+  color: var(--ds-text-deep);
+}
+
+.ds-tab.is-active {
+  background: var(--ds-primary);
+  color: var(--ds-primary-ink);
+}
+
+.ds-tab__count {
+  font-size: var(--ds-fs-help);
+  font-variant-numeric: tabular-nums;
+  opacity: 0.75;
+}

@@ -4,6 +4,7 @@ import '../inventory/Inventory.css';
 const LINKS = [
   { to: '/employees', label: 'Employee list', end: true },
   { to: '/employees/add', label: 'Add employee' },
+  { to: '/employees/import', label: 'Bulk import' },
 ];
 
 export default function EmployeeLayout() {

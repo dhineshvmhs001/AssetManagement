@@ -1,0 +1,36 @@
+.ds-page-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.ds-page-head__title {
+  margin: 0;
+  font-size: var(--ds-fs-h1);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--ds-text-deep);
+}
+
+.ds-page-head__sub {
+  margin: 4px 0 0;
+  font-size: var(--ds-fs-body);
+  color: var(--muted);
+}
+
+.ds-page-head__right {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ds-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px;
+  margin-bottom: 14px;
+}

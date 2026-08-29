@@ -1,0 +1,36 @@
+.ds-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-line);
+  border-radius: var(--ds-r-card);
+  box-shadow: var(--ds-card-shadow);
+  transition:
+    transform var(--ds-dur) var(--ds-ease),
+    box-shadow var(--ds-dur) var(--ds-ease);
+}
+
+.ds-card--hover:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--ds-card-shadow-lg);
+}
+
+/* For overlays and pinned rails that sit over scrolling content. */
+.ds-card--glass {
+  background: color-mix(in srgb, var(--card-bg) 82%, transparent);
+  backdrop-filter: blur(16px);
+  border-radius: 18px;
+}
+
+.ds-card__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.ds-card__title {
+  margin: 0;
+  font-size: var(--ds-fs-card-h);
+  font-weight: 800;
+  color: var(--ds-text-deep);
+}

@@ -24,6 +24,7 @@ import Maintenance from './pages/maintenance/Maintenance';
 import EmployeeLayout from './pages/employees/EmployeeLayout';
 import EmployeeList from './pages/employees/EmployeeList';
 import AddEmployee from './pages/employees/AddEmployee';
+import BulkImportEmployees from './pages/employees/BulkImportEmployees';
 import EmployeeDetails from './pages/employees/EmployeeDetails';
 import EditEmployee from './pages/employees/EditEmployee';
 import TicketLayout from './pages/tickets/TicketLayout';
@@ -32,7 +33,9 @@ import CreateTicket from './pages/tickets/CreateTicket';
 import TicketDetails from './pages/tickets/TicketDetails';
 import Activity from './pages/activity/Activity';
 import Reports from './pages/reports/Reports';
-import Test from './pages/test/Test';
+import MyAssets from './pages/my-assets/MyAssets';
+// import Test from './pages/test/Test';
+import MailTest from './pages/mail/MailTest';
 
 export default function App() {
   return (
@@ -48,12 +51,23 @@ export default function App() {
               </>
             }
           />
+          {/*
           <Route
             path="/test"
             element={
               <>
                 <ThemeToggle />
                 <Test />
+              </>
+            }
+          />
+          */}
+          <Route
+            path="/mail"
+            element={
+              <>
+                <ThemeToggle />
+                <MailTest />
               </>
             }
           />
@@ -86,6 +100,7 @@ export default function App() {
                 <Route path="/employees" element={<EmployeeLayout />}>
                   <Route index element={<EmployeeList />} />
                   <Route path="add" element={<AddEmployee />} />
+                  <Route path="import" element={<BulkImportEmployees />} />
                   <Route path=":code" element={<EmployeeDetails />} />
                   <Route path=":code/edit" element={<EditEmployee />} />
                 </Route>
@@ -94,6 +109,7 @@ export default function App() {
                   <Route path="add" element={<CreateTicket />} />
                   <Route path=":code" element={<TicketDetails />} />
                 </Route>
+                <Route path="/my-assets" element={<MyAssets />} />
                 <Route path="/activity" element={<Activity />} />
                 <Route path="/reports" element={<Reports />} />
               </Route>

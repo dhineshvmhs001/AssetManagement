@@ -13,6 +13,7 @@ const NAV = [
   { to: '/maintenance', label: 'Maintenance', icon: 'maintenance' },
   { to: '/employees', label: 'Employees', icon: 'employees' },
   { to: '/tickets', label: 'Tickets', icon: 'tickets' },
+  { to: '/my-assets', label: 'My assets', icon: 'assignment' },
   { to: '/activity', label: 'Activity Log', icon: 'activity' },
   { to: '/reports', label: 'Reports', icon: 'reports' },
 ];

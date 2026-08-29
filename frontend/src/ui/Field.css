@@ -1,0 +1,113 @@
+.ds-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+/* Spans every column of whatever grid or flex row the field sits in. Without
+ * this a filter row quietly collapses to content width. */
+.ds-field--full {
+  grid-column: 1 / -1;
+  width: 100%;
+  flex: 1 1 100%;
+}
+
+.ds-field__label {
+  font-size: var(--ds-fs-label);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--ds-label);
+}
+
+.ds-field__req {
+  color: var(--ds-danger);
+  margin-left: 2px;
+}
+
+.ds-field__hint {
+  font-size: var(--ds-fs-help);
+  color: var(--muted);
+}
+
+.ds-field__error {
+  font-size: var(--ds-fs-help);
+  font-weight: 600;
+  color: var(--ds-danger);
+}
+
+/* A read-only field says why, and who can change it — a greyed box with no
+ * explanation gets reported as a bug. */
+.ds-field__lock {
+  font-size: var(--ds-fs-help);
+  color: var(--ds-muted-strong);
+}
+
+.ds-input,
+.ds-textarea {
+  width: 100%;
+  padding: 7px 11px;
+  border: 1px solid var(--ds-field-border);
+  border-radius: var(--ds-r-input);
+  background: var(--ds-field-bg);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: var(--ds-fs-body);
+  font-weight: 500;
+  transition: box-shadow var(--ds-dur) var(--ds-ease), border-color var(--ds-dur) var(--ds-ease);
+}
+
+.ds-input--mono {
+  font-family: var(--ds-mono);
+}
+
+.ds-input::placeholder,
+.ds-textarea::placeholder {
+  color: var(--muted);
+}
+
+.ds-input:focus,
+.ds-textarea:focus {
+  outline: none;
+  border-color: var(--input-focus);
+  box-shadow: var(--ds-ring);
+}
+
+.ds-input:read-only,
+.ds-textarea:read-only {
+  background: var(--ds-surface);
+  cursor: default;
+}
+
+.ds-input:disabled,
+.ds-textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ds-textarea {
+  min-height: 84px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.ds-counter {
+  align-self: flex-end;
+  font-size: var(--ds-fs-help);
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+.ds-counter--full {
+  color: var(--ds-warning-d);
+  font-weight: 700;
+}
+
+/* Read-only value box — for facts shown but not edited here. */
+.ds-readonly {
+  padding: 7px 11px;
+  border-radius: var(--ds-r-input);
+  background: var(--ds-surface);
+  font-size: var(--ds-fs-body);
+  color: var(--ds-text-deep);
+}

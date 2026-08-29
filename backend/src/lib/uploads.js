@@ -6,6 +6,8 @@ const ROOT = path.join(__dirname, '../../uploads/assets');
 const VENDOR_ROOT = path.join(__dirname, '../../uploads/vendors');
 const EMPLOYEE_ROOT = path.join(__dirname, '../../uploads/employees');
 const TICKET_ROOT = path.join(__dirname, '../../uploads/tickets');
+const MAINTENANCE_ROOT = path.join(__dirname, '../../uploads/maintenance');
+const ASSIGNMENT_ROOT = path.join(__dirname, '../../uploads/assignments');
 
 const DOCUMENT_TYPES = new Set([
   'application/pdf',
@@ -30,7 +32,7 @@ const EXT = {
 };
 
 function allowedFor(field) {
-  return field === 'images' ? IMAGE_TYPES : DOCUMENT_TYPES;
+  return field === 'images' || field === 'photos' ? IMAGE_TYPES : DOCUMENT_TYPES;
 }
 
 function saveUploads(assetId, files = {}) {
@@ -60,6 +62,20 @@ function saveTicketUploads(ticketId, files = {}) {
   const attachments = Array.isArray(files.attachments) ? files.attachments : [];
   return {
     attachments: writeKind(TICKET_ROOT, ticketId, 'attachments', attachments),
+  };
+}
+
+function saveMaintenanceUploads(checkId, files = {}) {
+  const photos = Array.isArray(files.photos) ? files.photos : [];
+  return {
+    photos: writeKind(MAINTENANCE_ROOT, checkId, 'photos', photos),
+  };
+}
+
+function saveAssignmentUploads(assignmentId, files = {}) {
+  const documents = Array.isArray(files.documents) ? files.documents : [];
+  return {
+    documents: writeKind(ASSIGNMENT_ROOT, assignmentId, 'documents', documents),
   };
 }
 
@@ -110,6 +126,22 @@ function removeEmployeeUploads(employeeId) {
 function removeTicketUploads(ticketId) {
   try {
     fs.rmSync(path.join(TICKET_ROOT, ticketId), { recursive: true, force: true });
+  } catch {
+    /* nothing more we can do */
+  }
+}
+
+function removeMaintenanceUploads(checkId) {
+  try {
+    fs.rmSync(path.join(MAINTENANCE_ROOT, checkId), { recursive: true, force: true });
+  } catch {
+    /* nothing more we can do */
+  }
+}
+
+function removeAssignmentUploads(assignmentId) {
+  try {
+    fs.rmSync(path.join(ASSIGNMENT_ROOT, assignmentId), { recursive: true, force: true });
   } catch {
     /* nothing more we can do */
   }
@@ -171,11 +203,31 @@ function publicTicketFiles(ticketId, attachmentsRaw) {
   };
 }
 
+function publicMaintenanceFiles(checkId, photosRaw) {
+  return {
+    photos: parseStored(photosRaw).map((file) => ({
+      ...file,
+      path: file.stored ? `/maintenance/checks/${checkId}/files/photos/${file.stored}` : null,
+    })),
+  };
+}
+
+function publicAssignmentFiles(assignmentId, documentsRaw) {
+  return {
+    documents: parseStored(documentsRaw).map((file) => ({
+      ...file,
+      path: file.stored ? `/assignments/${assignmentId}/files/documents/${file.stored}` : null,
+    })),
+  };
+}
+
 module.exports = {
   ROOT,
   VENDOR_ROOT,
   EMPLOYEE_ROOT,
   TICKET_ROOT,
+  MAINTENANCE_ROOT,
+  ASSIGNMENT_ROOT,
   DOCUMENT_TYPES,
   IMAGE_TYPES,
   allowedFor,
@@ -183,13 +235,19 @@ module.exports = {
   saveVendorUploads,
   saveEmployeeUploads,
   saveTicketUploads,
+  saveMaintenanceUploads,
+  saveAssignmentUploads,
   removeAssetUploads,
   removeVendorUploads,
   removeEmployeeUploads,
   removeTicketUploads,
+  removeMaintenanceUploads,
+  removeAssignmentUploads,
   parseStored,
   publicFiles,
   publicVendorFiles,
   publicEmployeeFiles,
   publicTicketFiles,
+  publicMaintenanceFiles,
+  publicAssignmentFiles,
 };

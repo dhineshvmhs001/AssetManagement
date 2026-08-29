@@ -22,13 +22,13 @@
 
 .kbd-help-card h2 {
   margin: 0 0 14px;
-  font-size: 18px;
+  font-size: 1.125rem;
 }
 
 .kbd-help-card table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .kbd-help-card th {

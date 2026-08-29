@@ -19,6 +19,8 @@
   --header-h: 56px;
   --sidebar-w: 84px;
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  /* Change this one value to scale type app-wide (try 18px or 20px). */
+  --font-size: 20px;
   --frame-bg: #e4e7ee;
   --shell-bg: #f4f5f8;
   --shell-shadow: 0 18px 50px rgba(15, 23, 42, 0.12);
@@ -30,6 +32,8 @@
   --search-bg: #ffffff;
   --accent: #d946ef;
   --accent-ink: #ffffff;
+  --table-head-bg: transparent;
+  --table-head-ink: var(--muted);
 }
 
 [data-theme='dark'] {
@@ -60,4 +64,939 @@
   --search-bg: #161616;
   --accent: #f0b429;
   --accent-ink: #1a1408;
+  --table-head-bg: transparent;
+  --table-head-ink: var(--muted);
+}
+
+/* VITE_SKIN=mhs or ?skin=mhs — CRM-like purple. Logo is not recolored. */
+[data-skin='mhs'][data-theme='light'] {
+  --navy: #4c1d95;
+  --teal: #6d28d9;
+  --ink: #1f2937;
+  --muted: #6b7280;
+  --line: #e9e4f5;
+  --bg: #f4f0fb;
+  --paper: #ffffff;
+  --input-bg: #ffffff;
+  --input-border: #ddd6fe;
+  --input-focus: #6d28d9;
+  --login-bg: #f5f3ff;
+  --brand-from: #6d28d9;
+  --brand-to: #7c3aed;
+  --frame-bg: #ece6f8;
+  --shell-bg: #faf8ff;
+  --rail-icon: #6d28d9;
+  --rail-icon-bg: rgba(109, 40, 217, 0.12);
+  --search-bg: #ffffff;
+  --accent: #6d28d9;
+  --accent-ink: #ffffff;
+  --table-head-bg: #6d28d9;
+  --table-head-ink: #ffffff;
+}
+
+[data-skin='mhs'][data-theme='dark'] {
+  --navy: #ede9fe;
+  --teal: #c4b5fd;
+  --input-focus: #a78bfa;
+  --brand-from: #a78bfa;
+  --brand-to: #7c3aed;
+  --rail-icon: #c4b5fd;
+  --rail-icon-bg: rgba(167, 139, 250, 0.14);
+  --accent: #a78bfa;
+  --accent-ink: #1e1135;
+  --table-head-bg: #5b21b6;
+  --table-head-ink: #ffffff;
+}
+
+/* Nord — arctic Polar Night / Frost (arcticicestudio) */
+[data-skin='nord'][data-theme='light'] {
+  --navy: #3b4252;
+  --teal: #5e81ac;
+  --ink: #2e3440;
+  --muted: #4c566a;
+  --line: #d8dee9;
+  --bg: #eceff4;
+  --paper: #ffffff;
+  --input-bg: #ffffff;
+  --input-border: #d8dee9;
+  --input-focus: #5e81ac;
+  --login-bg: #e5e9f0;
+  --brand-from: #5e81ac;
+  --brand-to: #88c0d0;
+  --frame-bg: #e5e9f0;
+  --shell-bg: #eceff4;
+  --rail-icon: #5e81ac;
+  --rail-icon-bg: rgba(94, 129, 172, 0.14);
+  --search-bg: #ffffff;
+  --accent: #5e81ac;
+  --accent-ink: #ffffff;
+  --table-head-bg: #5e81ac;
+  --table-head-ink: #ffffff;
+}
+
+[data-skin='nord'][data-theme='dark'] {
+  --navy: #eceff4;
+  --teal: #88c0d0;
+  --ink: #eceff4;
+  --muted: #9aa4b5;
+  --line: #434c5e;
+  --bg: #2e3440;
+  --paper: #3b4252;
+  --input-bg: #3b4252;
+  --input-border: #4c566a;
+  --input-focus: #88c0d0;
+  --login-bg: #242933;
+  --brand-from: #88c0d0;
+  --brand-to: #81a1c1;
+  --frame-bg: #2e3440;
+  --shell-bg: #242933;
+  --card-bg: #3b4252;
+  --search-bg: #3b4252;
+  --rail-icon: #88c0d0;
+  --rail-icon-bg: rgba(136, 192, 208, 0.14);
+  --accent: #88c0d0;
+  --accent-ink: #2e3440;
+  --table-head-bg: #5e81ac;
+  --table-head-ink: #eceff4;
+}
+
+/* Catppuccin — Latte / Mocha mauve */
+[data-skin='catppuccin'][data-theme='light'] {
+  --navy: #4c4f69;
+  --teal: #1e66f5;
+  --ink: #4c4f69;
+  --muted: #6c6f85;
+  --line: #ccd0da;
+  --bg: #eff1f5;
+  --paper: #ffffff;
+  --input-bg: #ffffff;
+  --input-border: #ccd0da;
+  --input-focus: #8839ef;
+  --login-bg: #e6e9ef;
+  --brand-from: #8839ef;
+  --brand-to: #ea76cb;
+  --frame-bg: #e6e9ef;
+  --shell-bg: #eff1f5;
+  --rail-icon: #8839ef;
+  --rail-icon-bg: rgba(136, 57, 239, 0.12);
+  --search-bg: #ffffff;
+  --accent: #8839ef;
+  --accent-ink: #ffffff;
+  --table-head-bg: #8839ef;
+  --table-head-ink: #ffffff;
+}
+
+[data-skin='catppuccin'][data-theme='dark'] {
+  --navy: #cdd6f4;
+  --teal: #89b4fa;
+  --ink: #cdd6f4;
+  --muted: #a6adc8;
+  --line: #313244;
+  --bg: #1e1e2e;
+  --paper: #181825;
+  --input-bg: #181825;
+  --input-border: #45475a;
+  --input-focus: #cba6f7;
+  --login-bg: #11111b;
+  --brand-from: #cba6f7;
+  --brand-to: #f5c2e7;
+  --frame-bg: #1e1e2e;
+  --shell-bg: #11111b;
+  --card-bg: #181825;
+  --search-bg: #181825;
+  --rail-icon: #cba6f7;
+  --rail-icon-bg: rgba(203, 166, 247, 0.14);
+  --accent: #cba6f7;
+  --accent-ink: #1e1e2e;
+  --table-head-bg: #8839ef;
+  --table-head-ink: #ffffff;
+}
+
+/* Tokyo Night — Day / Night */
+[data-skin='tokyo'][data-theme='light'] {
+  --navy: #3760bf;
+  --teal: #07879d;
+  --ink: #3760bf;
+  --muted: #6172b0;
+  --line: #c4c8da;
+  --bg: #e1e2e7;
+  --paper: #ffffff;
+  --input-bg: #ffffff;
+  --input-border: #c4c8da;
+  --input-focus: #2e7de9;
+  --login-bg: #d5d6db;
+  --brand-from: #2e7de9;
+  --brand-to: #9854f1;
+  --frame-bg: #d5d6db;
+  --shell-bg: #e1e2e7;
+  --card-bg: #ffffff;
+  --rail-icon: #2e7de9;
+  --rail-icon-bg: rgba(46, 125, 233, 0.12);
+  --search-bg: #ffffff;
+  --accent: #2e7de9;
+  --accent-ink: #ffffff;
+  --table-head-bg: #2e7de9;
+  --table-head-ink: #ffffff;
+}
+
+[data-skin='tokyo'][data-theme='dark'] {
+  --navy: #c0caf5;
+  --teal: #7dcfff;
+  --ink: #c0caf5;
+  --muted: #565f89;
+  --line: #292e42;
+  --bg: #1a1b26;
+  --paper: #16161e;
+  --input-bg: #16161e;
+  --input-border: #292e42;
+  --input-focus: #7aa2f7;
+  --login-bg: #16161e;
+  --brand-from: #7aa2f7;
+  --brand-to: #bb9af7;
+  --frame-bg: #1a1b26;
+  --shell-bg: #16161e;
+  --card-bg: #24283b;
+  --search-bg: #24283b;
+  --rail-icon: #7aa2f7;
+  --rail-icon-bg: rgba(122, 162, 247, 0.14);
+  --accent: #7aa2f7;
+  --accent-ink: #1a1b26;
+  --table-head-bg: #3d59a1;
+  --table-head-ink: #c0caf5;
+}
+
+/* GitHub Primer */
+[data-skin='github'][data-theme='light'] {
+  --navy: #1f2328;
+  --teal: #0969da;
+  --ink: #1f2328;
+  --muted: #656d76;
+  --line: #d0d7de;
+  --bg: #f6f8fa;
+  --paper: #ffffff;
+  --input-bg: #ffffff;
+  --input-border: #d0d7de;
+  --input-focus: #0969da;
+  --login-bg: #f6f8fa;
+  --brand-from: #0969da;
+  --brand-to: #1f6feb;
+  --frame-bg: #f6f8fa;
+  --shell-bg: #ffffff;
+  --rail-icon: #0969da;
+  --rail-icon-bg: rgba(9, 105, 218, 0.1);
+  --search-bg: #f6f8fa;
+  --accent: #0969da;
+  --accent-ink: #ffffff;
+  --table-head-bg: #0969da;
+  --table-head-ink: #ffffff;
+}
+
+[data-skin='github'][data-theme='dark'] {
+  --navy: #e6edf3;
+  --teal: #58a6ff;
+  --ink: #e6edf3;
+  --muted: #8b949e;
+  --line: #30363d;
+  --bg: #0d1117;
+  --paper: #161b22;
+  --input-bg: #0d1117;
+  --input-border: #30363d;
+  --input-focus: #58a6ff;
+  --login-bg: #010409;
+  --brand-from: #58a6ff;
+  --brand-to: #1f6feb;
+  --frame-bg: #0d1117;
+  --shell-bg: #010409;
+  --card-bg: #161b22;
+  --search-bg: #161b22;
+  --rail-icon: #58a6ff;
+  --rail-icon-bg: rgba(88, 166, 255, 0.14);
+  --accent: #58a6ff;
+  --accent-ink: #0d1117;
+  --table-head-bg: #1f6feb;
+  --table-head-ink: #ffffff;
+}
+
+/* Linear — Magic Blue #5E6AD2 */
+[data-skin='linear'][data-theme='light'] {
+  --navy: #222326;
+  --teal: #5e6ad2;
+  --ink: #222326;
+  --muted: #6b6f76;
+  --line: #e6e6e6;
+  --bg: #f7f8f8;
+  --paper: #ffffff;
+  --input-bg: #ffffff;
+  --input-border: #d8d8d8;
+  --input-focus: #5e6ad2;
+  --login-bg: #f3f4f6;
+  --brand-from: #5e6ad2;
+  --brand-to: #8b87ea;
+  --frame-bg: #ebebeb;
+  --shell-bg: #f7f8f8;
+  --rail-icon: #5e6ad2;
+  --rail-icon-bg: rgba(94, 106, 210, 0.12);
+  --search-bg: #ffffff;
+  --accent: #5e6ad2;
+  --accent-ink: #ffffff;
+  --table-head-bg: #5e6ad2;
+  --table-head-ink: #ffffff;
+}
+
+[data-skin='linear'][data-theme='dark'] {
+  --navy: #f3f4f5;
+  --teal: #8b87ea;
+  --ink: #e8e8ea;
+  --muted: #8a8f98;
+  --line: #2a2b31;
+  --bg: #0f1014;
+  --paper: #191a23;
+  --input-bg: #191a23;
+  --input-border: #2a2b31;
+  --input-focus: #8b87ea;
+  --login-bg: #0b0c10;
+  --brand-from: #8b87ea;
+  --brand-to: #5e6ad2;
+  --frame-bg: #0f1014;
+  --shell-bg: #0b0c10;
+  --card-bg: #191a23;
+  --search-bg: #191a23;
+  --rail-icon: #8b87ea;
+  --rail-icon-bg: rgba(139, 135, 234, 0.16);
+  --accent: #8b87ea;
+  --accent-ink: #0f1014;
+  --table-head-bg: #5e6ad2;
+  --table-head-ink: #ffffff;
+}
+
+/* Dracula — Alucard (light) / Dracula (dark) */
+[data-skin='dracula'][data-theme='light'] {
+  --navy: #1f1f28;
+  --teal: #644ac9;
+  --ink: #1f1f28;
+  --muted: #6c664b;
+  --line: #e0dfe6;
+  --bg: #f5f4f7;
+  --paper: #ffffff;
+  --danger: #cb3a2a;
+  --ok: #14710a;
+  --input-bg: #ffffff;
+  --input-border: #ddd8e4;
+  --input-focus: #644ac9;
+  --login-bg: #efeef3;
+  --brand-from: #644ac9;
+  --brand-to: #a3308a;
+  --frame-bg: #eceaf1;
+  --shell-bg: #faf9fb;
+  --card-bg: #ffffff;
+  --rail-icon: #644ac9;
+  --rail-icon-bg: rgba(100, 74, 201, 0.12);
+  --search-bg: #ffffff;
+  --accent: #644ac9;
+  --accent-ink: #ffffff;
+  --table-head-bg: #644ac9;
+  --table-head-ink: #ffffff;
+}
+
+[data-skin='dracula'][data-theme='dark'] {
+  --navy: #f8f8f2;
+  --teal: #8be9fd;
+  --ink: #f8f8f2;
+  --muted: #9aa0bd;
+  --line: #363948;
+  --bg: #282a36;
+  --paper: #21222c;
+  --danger: #ff6e6e;
+  --ok: #69ff94;
+  --input-bg: #21222c;
+  --input-border: #44475a;
+  --input-focus: #bd93f9;
+  --login-bg: #191a21;
+  --brand-from: #bd93f9;
+  --brand-to: #ff79c6;
+  --frame-bg: #282a36;
+  --shell-bg: #191a21;
+  --card-bg: #21222c;
+  --search-bg: #21222c;
+  --rail-icon: #bd93f9;
+  --rail-icon-bg: rgba(189, 147, 249, 0.16);
+  --accent: #bd93f9;
+  --accent-ink: #21222c;
+  --table-head-bg: #6272a4;
+  --table-head-ink: #f8f8f2;
+}
+
+/* Rosé Pine — Dawn / Moon. Soft, warm, low-contrast. */
+[data-skin='rosepine'][data-theme='light'] {
+  --navy: #575279;
+  --teal: #286983;
+  --ink: #575279;
+  --muted: #797593;
+  --line: #dfdad9;
+  --bg: #faf4ed;
+  --paper: #fffaf3;
+  --danger: #b4637a;
+  --ok: #56949f;
+  --input-bg: #fffaf3;
+  --input-border: #dfdad9;
+  --input-focus: #907aa9;
+  --login-bg: #f2e9e1;
+  --brand-from: #907aa9;
+  --brand-to: #d7827e;
+  --frame-bg: #f2e9e1;
+  --shell-bg: #fffaf3;
+  --card-bg: #fffaf3;
+  --card-line: rgba(87, 82, 121, 0.08);
+  --rail-icon: #907aa9;
+  --rail-icon-bg: rgba(144, 122, 169, 0.14);
+  --search-bg: #fffaf3;
+  --accent: #907aa9;
+  --accent-ink: #fffaf3;
+  --table-head-bg: #907aa9;
+  --table-head-ink: #fffaf3;
+}
+
+[data-skin='rosepine'][data-theme='dark'] {
+  --navy: #e0def4;
+  --teal: #9ccfd8;
+  --ink: #e0def4;
+  --muted: #908caa;
+  --line: #393552;
+  --bg: #232136;
+  --paper: #2a273f;
+  --danger: #eb6f92;
+  --ok: #9ccfd8;
+  --input-bg: #2a273f;
+  --input-border: #44415a;
+  --input-focus: #c4a7e7;
+  --login-bg: #1f1d2e;
+  --brand-from: #c4a7e7;
+  --brand-to: #ea9a97;
+  --frame-bg: #232136;
+  --shell-bg: #1f1d2e;
+  --card-bg: #2a273f;
+  --search-bg: #2a273f;
+  --rail-icon: #c4a7e7;
+  --rail-icon-bg: rgba(196, 167, 231, 0.16);
+  --accent: #c4a7e7;
+  --accent-ink: #232136;
+  --table-head-bg: #56526e;
+  --table-head-ink: #e0def4;
+}
+
+/* Everforest — soft, warm green. Easy on the eyes for long sessions. */
+[data-skin='everforest'][data-theme='light'] {
+  --navy: #5c6a72;
+  --teal: #3a94c5;
+  --ink: #5c6a72;
+  --muted: #829181;
+  --line: #e0dcc7;
+  --bg: #fdf6e3;
+  --paper: #fffbef;
+  --danger: #f85552;
+  --ok: #8da101;
+  --input-bg: #fffbef;
+  --input-border: #e0dcc7;
+  --input-focus: #8da101;
+  --login-bg: #f4f0d9;
+  --brand-from: #8da101;
+  --brand-to: #35a77c;
+  --frame-bg: #f4f0d9;
+  --shell-bg: #fffbef;
+  --card-bg: #fffbef;
+  --card-line: rgba(92, 106, 114, 0.1);
+  --rail-icon: #8da101;
+  --rail-icon-bg: rgba(141, 161, 1, 0.14);
+  --search-bg: #fffbef;
+  --accent: #8da101;
+  --accent-ink: #fffbef;
+  --table-head-bg: #8da101;
+  --table-head-ink: #fffbef;
+}
+
+[data-skin='everforest'][data-theme='dark'] {
+  --navy: #d3c6aa;
+  --teal: #7fbbb3;
+  --ink: #d3c6aa;
+  --muted: #9da9a0;
+  --line: #3d484d;
+  --bg: #2d353b;
+  --paper: #343f44;
+  --danger: #e67e80;
+  --ok: #a7c080;
+  --input-bg: #343f44;
+  --input-border: #475258;
+  --input-focus: #a7c080;
+  --login-bg: #232a2e;
+  --brand-from: #a7c080;
+  --brand-to: #7fbbb3;
+  --frame-bg: #2d353b;
+  --shell-bg: #232a2e;
+  --card-bg: #343f44;
+  --search-bg: #343f44;
+  --rail-icon: #a7c080;
+  --rail-icon-bg: rgba(167, 192, 128, 0.16);
+  --accent: #a7c080;
+  --accent-ink: #2d353b;
+  --table-head-bg: #4f5b58;
+  --table-head-ink: #d3c6aa;
+}
+
+/* Gruvbox — retro warm, high contrast. */
+[data-skin='gruvbox'][data-theme='light'] {
+  --navy: #3c3836;
+  --teal: #427b58;
+  --ink: #3c3836;
+  --muted: #7c6f64;
+  --line: #ebdbb2;
+  --bg: #fbf1c7;
+  --paper: #f9f5d7;
+  --danger: #9d0006;
+  --ok: #79740e;
+  --input-bg: #f9f5d7;
+  --input-border: #d5c4a1;
+  --input-focus: #af3a03;
+  --login-bg: #f2e5bc;
+  --brand-from: #af3a03;
+  --brand-to: #b57614;
+  --frame-bg: #f2e5bc;
+  --shell-bg: #f9f5d7;
+  --card-bg: #f9f5d7;
+  --card-line: rgba(60, 56, 54, 0.1);
+  --rail-icon: #af3a03;
+  --rail-icon-bg: rgba(175, 58, 3, 0.12);
+  --search-bg: #f9f5d7;
+  --accent: #af3a03;
+  --accent-ink: #fbf1c7;
+  --table-head-bg: #af3a03;
+  --table-head-ink: #fbf1c7;
+}
+
+[data-skin='gruvbox'][data-theme='dark'] {
+  --navy: #ebdbb2;
+  --teal: #8ec07c;
+  --ink: #ebdbb2;
+  --muted: #a89984;
+  --line: #3c3836;
+  --bg: #282828;
+  --paper: #32302f;
+  --danger: #fb4934;
+  --ok: #b8bb26;
+  --input-bg: #32302f;
+  --input-border: #504945;
+  --input-focus: #fe8019;
+  --login-bg: #1d2021;
+  --brand-from: #fe8019;
+  --brand-to: #fabd2f;
+  --frame-bg: #282828;
+  --shell-bg: #1d2021;
+  --card-bg: #32302f;
+  --search-bg: #32302f;
+  --rail-icon: #fe8019;
+  --rail-icon-bg: rgba(254, 128, 25, 0.16);
+  --accent: #fe8019;
+  --accent-ink: #282828;
+  --table-head-bg: #504945;
+  --table-head-ink: #ebdbb2;
+}
+
+/* Solarized — Ethan Schoonover's precision palette. */
+[data-skin='solarized'][data-theme='light'] {
+  --navy: #073642;
+  --teal: #2aa198;
+  --ink: #586e75;
+  --muted: #93a1a1;
+  --line: #e6ddc6;
+  --bg: #fdf6e3;
+  --paper: #fffdf6;
+  --danger: #dc322f;
+  --ok: #859900;
+  --input-bg: #fffdf6;
+  --input-border: #e6ddc6;
+  --input-focus: #268bd2;
+  --login-bg: #eee8d5;
+  --brand-from: #268bd2;
+  --brand-to: #2aa198;
+  --frame-bg: #eee8d5;
+  --shell-bg: #fffdf6;
+  --card-bg: #fffdf6;
+  --card-line: rgba(7, 54, 66, 0.08);
+  --rail-icon: #268bd2;
+  --rail-icon-bg: rgba(38, 139, 210, 0.12);
+  --search-bg: #fffdf6;
+  --accent: #268bd2;
+  --accent-ink: #fdf6e3;
+  --table-head-bg: #268bd2;
+  --table-head-ink: #fdf6e3;
+}
+
+[data-skin='solarized'][data-theme='dark'] {
+  --navy: #eee8d5;
+  --teal: #2aa198;
+  --ink: #93a1a1;
+  --muted: #657b83;
+  --line: #073642;
+  --bg: #002b36;
+  --paper: #073642;
+  --danger: #dc322f;
+  --ok: #859900;
+  --input-bg: #073642;
+  --input-border: #0d4a5a;
+  --input-focus: #268bd2;
+  --login-bg: #001f27;
+  --brand-from: #268bd2;
+  --brand-to: #2aa198;
+  --frame-bg: #002b36;
+  --shell-bg: #001f27;
+  --card-bg: #073642;
+  --search-bg: #073642;
+  --rail-icon: #2aa198;
+  --rail-icon-bg: rgba(42, 161, 152, 0.16);
+  --accent: #2aa198;
+  --accent-ink: #002b36;
+  --table-head-bg: #0d4a5a;
+  --table-head-ink: #eee8d5;
+}
+
+/* Vercel / Geist — near-monochrome, minimal. Lets the data do the talking. */
+[data-skin='vercel'][data-theme='light'] {
+  --navy: #000000;
+  --teal: #171717;
+  --ink: #171717;
+  --muted: #737373;
+  --line: #ebebeb;
+  --bg: #fafafa;
+  --paper: #ffffff;
+  --danger: #e5484d;
+  --ok: #0a7f4f;
+  --input-bg: #ffffff;
+  --input-border: #e5e5e5;
+  --input-focus: #171717;
+  --login-bg: #fafafa;
+  --brand-from: #171717;
+  --brand-to: #666666;
+  --frame-bg: #f2f2f2;
+  --shell-bg: #ffffff;
+  --card-bg: #ffffff;
+  --card-line: rgba(0, 0, 0, 0.08);
+  --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  --rail-icon: #171717;
+  --rail-icon-bg: rgba(0, 0, 0, 0.06);
+  --search-bg: #ffffff;
+  --accent: #171717;
+  --accent-ink: #ffffff;
+  --table-head-bg: transparent;
+  --table-head-ink: #737373;
+}
+
+[data-skin='vercel'][data-theme='dark'] {
+  --navy: #ffffff;
+  --teal: #ededed;
+  --ink: #ededed;
+  --muted: #a1a1a1;
+  --line: #262626;
+  --bg: #0a0a0a;
+  --paper: #111111;
+  --danger: #ff6369;
+  --ok: #3dd68c;
+  --input-bg: #111111;
+  --input-border: #2e2e2e;
+  --input-focus: #ededed;
+  --login-bg: #000000;
+  --brand-from: #ffffff;
+  --brand-to: #8f8f8f;
+  --frame-bg: #0a0a0a;
+  --shell-bg: #000000;
+  --card-bg: #111111;
+  --search-bg: #111111;
+  --rail-icon: #ededed;
+  --rail-icon-bg: rgba(255, 255, 255, 0.08);
+  --accent: #ededed;
+  --accent-ink: #0a0a0a;
+  --table-head-bg: transparent;
+  --table-head-ink: #a1a1a1;
+}
+
+/* ==========================================================================
+   Black & gold — three characters of the same pairing.
+   gold-sweet   soft champagne, warm and gentle
+   gold-rugged  brass and iron, industrial and hard-edged
+   gold-jewel   obsidian and polished 24k, high-sheen luxury
+   ========================================================================== */
+
+/* Black & gold — SWEET. Champagne on warm cream / cocoa. Low contrast, soft. */
+[data-skin='gold-sweet'][data-theme='light'] {
+  --navy: #2b241a;
+  --teal: #9a7b32;
+  --ink: #2b241a;
+  --muted: #8a7c66;
+  --line: #ebe1cf;
+  --bg: #faf6ee;
+  --paper: #fffdf8;
+  --danger: #b4544a;
+  --ok: #6f7f45;
+  --input-bg: #fffdf8;
+  --input-border: #e6d9c0;
+  --input-focus: #c9a44c;
+  --shadow: 0 1px 3px rgba(74, 58, 30, 0.07), 0 8px 24px rgba(74, 58, 30, 0.06);
+  --login-bg: #f4ecdd;
+  --brand-from: #c9a44c;
+  --brand-to: #e6cd93;
+  --frame-bg: #f2e9d8;
+  --shell-bg: #fffdf8;
+  --shell-shadow: 0 18px 50px rgba(74, 58, 30, 0.1);
+  --card-bg: #fffdf8;
+  --card-line: rgba(74, 58, 30, 0.08);
+  --card-shadow: 0 10px 30px rgba(74, 58, 30, 0.06);
+  --rail-icon: #a8863a;
+  --rail-icon-bg: rgba(201, 164, 76, 0.14);
+  --search-bg: #fffdf8;
+  --accent: #b8933f;
+  --accent-ink: #fffdf8;
+  --table-head-bg: #e8dcc0;
+  --table-head-ink: #4a3a1e;
+}
+
+[data-skin='gold-sweet'][data-theme='dark'] {
+  --navy: #f4e9d2;
+  --teal: #e6cd93;
+  --ink: #efe4cf;
+  --muted: #a2937a;
+  --line: #332b20;
+  --bg: #191510;
+  --paper: #211c15;
+  --danger: #e79a90;
+  --ok: #bcc98a;
+  --input-bg: #211c15;
+  --input-border: #3b3126;
+  --input-focus: #e6cd93;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 12px 32px rgba(0, 0, 0, 0.3);
+  --login-bg: #100d09;
+  --brand-from: #f0dcae;
+  --brand-to: #c9a44c;
+  --frame-bg: #191510;
+  --shell-bg: #100d09;
+  --shell-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+  --card-bg: #211c15;
+  --card-line: rgba(230, 205, 147, 0.1);
+  --card-shadow: none;
+  --rail-icon: #e6cd93;
+  --rail-icon-bg: rgba(230, 205, 147, 0.12);
+  --search-bg: #211c15;
+  --accent: #e6cd93;
+  --accent-ink: #1c1710;
+  --table-head-bg: #33291a;
+  --table-head-ink: #f0dcae;
+}
+
+/* Black & gold — RUGGED. Brass on iron. Hard edges, gritty contrast. */
+[data-skin='gold-rugged'][data-theme='light'] {
+  --navy: #1a1a18;
+  --teal: #8a6a17;
+  --ink: #1f1e1b;
+  --muted: #6e6a5f;
+  --line: #d6d2c6;
+  --bg: #eceae3;
+  --paper: #f7f5ef;
+  --danger: #a33125;
+  --ok: #5c6b21;
+  --input-bg: #f7f5ef;
+  --input-border: #c8c3b4;
+  --input-focus: #a07c1c;
+  --shadow: 0 1px 2px rgba(26, 26, 24, 0.16), 0 6px 16px rgba(26, 26, 24, 0.1);
+  --login-bg: #e2dfd5;
+  --brand-from: #8a6a17;
+  --brand-to: #c8992c;
+  --frame-bg: #e2dfd5;
+  --shell-bg: #f7f5ef;
+  --shell-shadow: 0 12px 34px rgba(26, 26, 24, 0.16);
+  --card-bg: #f7f5ef;
+  --card-line: rgba(26, 26, 24, 0.14);
+  --card-shadow: 0 6px 16px rgba(26, 26, 24, 0.08);
+  --rail-icon: #8a6a17;
+  --rail-icon-bg: rgba(138, 106, 23, 0.14);
+  --search-bg: #f7f5ef;
+  --accent: #8a6a17;
+  --accent-ink: #f7f5ef;
+  --table-head-bg: #1f1e1b;
+  --table-head-ink: #c8992c;
+}
+
+[data-skin='gold-rugged'][data-theme='dark'] {
+  --navy: #ece7d8;
+  --teal: #c8992c;
+  --ink: #ddd8ca;
+  --muted: #8b8577;
+  --line: #33312b;
+  --bg: #0d0d0c;
+  --paper: #171715;
+  --danger: #e2624c;
+  --ok: #a3b04a;
+  --input-bg: #121211;
+  --input-border: #3a3831;
+  --input-focus: #c8992c;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.7), 0 10px 24px rgba(0, 0, 0, 0.5);
+  --login-bg: #060605;
+  --brand-from: #c8992c;
+  --brand-to: #7a5c12;
+  --frame-bg: #0d0d0c;
+  --shell-bg: #060605;
+  --shell-shadow: 0 20px 48px rgba(0, 0, 0, 0.6);
+  --card-bg: #171715;
+  --card-line: rgba(200, 153, 44, 0.16);
+  --card-shadow: none;
+  --rail-icon: #c8992c;
+  --rail-icon-bg: rgba(200, 153, 44, 0.14);
+  --search-bg: #171715;
+  --accent: #c8992c;
+  --accent-ink: #0d0d0c;
+  --table-head-bg: #2a251a;
+  --table-head-ink: #d9ab3c;
+}
+
+/* Black & gold — JEWEL. Obsidian and polished 24k. Deep blacks, high sheen. */
+[data-skin='gold-jewel'][data-theme='light'] {
+  --navy: #14120c;
+  --teal: #9c7c1f;
+  --ink: #1a1710;
+  --muted: #7d7462;
+  --line: #e4dcc8;
+  --bg: #f6f2e8;
+  --paper: #fffefb;
+  --danger: #9c2b2b;
+  --ok: #4f6b3a;
+  --input-bg: #fffefb;
+  --input-border: #ded4bc;
+  --input-focus: #b89530;
+  --shadow: 0 1px 3px rgba(20, 18, 12, 0.1), 0 10px 30px rgba(184, 149, 48, 0.12);
+  --login-bg: #efe9da;
+  --brand-from: #b89530;
+  --brand-to: #f0dfa4;
+  --frame-bg: #ece5d3;
+  --shell-bg: #fffefb;
+  --shell-shadow: 0 20px 56px rgba(20, 18, 12, 0.14);
+  --card-bg: #fffefb;
+  --card-line: rgba(184, 149, 48, 0.22);
+  --card-shadow: 0 10px 30px rgba(20, 18, 12, 0.07);
+  --rail-icon: #b89530;
+  --rail-icon-bg: rgba(184, 149, 48, 0.14);
+  --search-bg: #fffefb;
+  --accent: #a8862a;
+  --accent-ink: #fffefb;
+  --table-head-bg: #14120c;
+  --table-head-ink: #e8d187;
+}
+
+[data-skin='gold-jewel'][data-theme='dark'] {
+  --navy: #f6ecd0;
+  --teal: #e8d187;
+  --ink: #ece3cd;
+  --muted: #9b9179;
+  --line: #2a2519;
+  --bg: #08070a;
+  --paper: #121016;
+  --danger: #f08a7a;
+  --ok: #b7cf8e;
+  --input-bg: #0e0d12;
+  --input-border: #342d1c;
+  --input-focus: #d4af37;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.8), 0 14px 40px rgba(212, 175, 55, 0.1);
+  --login-bg: #030305;
+  --brand-from: #f5e6a8;
+  --brand-to: #b8860b;
+  --frame-bg: #08070a;
+  --shell-bg: #030305;
+  --shell-shadow: 0 28px 70px rgba(0, 0, 0, 0.7);
+  --card-bg: #121016;
+  --card-line: rgba(212, 175, 55, 0.2);
+  --card-shadow: none;
+  --rail-icon: #d4af37;
+  --rail-icon-bg: rgba(212, 175, 55, 0.14);
+  --search-bg: #121016;
+  --accent: #d4af37;
+  --accent-ink: #08070a;
+  --table-head-bg: #241d0e;
+  --table-head-ink: #f5e6a8;
+}
+
+/* ==========================================================================
+   CRM — the operations design system palette. Purple on lavender.
+   The page ground is lavender, not white; cards are white with a white
+   border, which reads as a lifted edge against it.
+   ========================================================================== */
+[data-skin='crm'][data-theme='light'] {
+  --navy: #3b0764;
+  --teal: #6d28d9;
+  --ink: #3b0764;
+  --muted: rgba(91, 33, 182, 0.55);
+  --line: rgba(91, 33, 182, 0.1);
+  --bg: #edeaf8;
+  --paper: #ffffff;
+  --danger: #dc2626;
+  --ok: #059669;
+  --input-bg: rgba(237, 234, 248, 0.55);
+  --input-border: rgba(91, 33, 182, 0.18);
+  --input-focus: #5b21b6;
+  --shadow: 0 4px 24px rgba(91, 33, 182, 0.08);
+  --login-bg: #edeaf8;
+  --brand-from: #7c3aed;
+  --brand-to: #5b21b6;
+  --frame-bg: #edeaf8;
+  --shell-bg: #ffffff;
+  --shell-shadow: 0 12px 40px rgba(91, 33, 182, 0.16);
+  --card-bg: #ffffff;
+  --card-line: rgba(255, 255, 255, 0.6);
+  --card-shadow: 0 4px 24px rgba(91, 33, 182, 0.08);
+  --rail-icon: #5b21b6;
+  --rail-icon-bg: rgba(91, 33, 182, 0.1);
+  --search-bg: #ffffff;
+  --accent: #5b21b6;
+  --accent-ink: #ffffff;
+  --table-head-bg: linear-gradient(90deg, #4c1d95, #5b21b6, #6d28d9);
+  --table-head-ink: #ffffff;
+  /* Design-system overrides — see ui/tokens.css for what these drive. */
+  --ds-label: #4a1a94;
+  --ds-muted-strong: rgba(91, 33, 182, 0.7);
+  --ds-surface: rgba(237, 234, 248, 0.45);
+  --ds-card-shadow-lg: 0 12px 40px rgba(91, 33, 182, 0.16);
+  --ds-btn-shadow: 0 4px 20px rgba(91, 33, 182, 0.35);
+  --ds-ring: 0 0 0 3px rgba(91, 33, 182, 0.1);
+}
+
+[data-skin='crm'][data-theme='dark'] {
+  --navy: #ede9fe;
+  --teal: #c4b5fd;
+  --ink: #e9e4f5;
+  --muted: rgba(216, 205, 245, 0.55);
+  --line: rgba(167, 139, 250, 0.14);
+  --bg: #14101f;
+  --paper: #1c1730;
+  --danger: #f87171;
+  --ok: #34d399;
+  --input-bg: rgba(124, 58, 237, 0.1);
+  --input-border: rgba(167, 139, 250, 0.24);
+  --input-focus: #a78bfa;
+  --shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+  --login-bg: #0d0a16;
+  --brand-from: #a78bfa;
+  --brand-to: #7c3aed;
+  --frame-bg: #14101f;
+  --shell-bg: #0d0a16;
+  --shell-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  --card-bg: #1c1730;
+  --card-line: rgba(167, 139, 250, 0.12);
+  --card-shadow: none;
+  --rail-icon: #c4b5fd;
+  --rail-icon-bg: rgba(167, 139, 250, 0.14);
+  --search-bg: #1c1730;
+  --accent: #a78bfa;
+  --accent-ink: #1a1030;
+  --table-head-bg: linear-gradient(90deg, #4c1d95, #5b21b6, #6d28d9);
+  --table-head-ink: #f5f3ff;
+  --ds-label: #c4b5fd;
+  --ds-muted-strong: rgba(216, 205, 245, 0.72);
+  --ds-surface: rgba(167, 139, 250, 0.07);
+  --ds-card-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.55);
+  --ds-btn-shadow: 0 4px 20px rgba(124, 58, 237, 0.45);
+  --ds-ring: 0 0 0 3px rgba(167, 139, 250, 0.18);
 }

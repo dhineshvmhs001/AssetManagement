@@ -21,6 +21,11 @@ export default function CreateTicket() {
       return;
     }
     notify.success(`Ticket ${data.ticket.ticketCode} created`);
+    if (data.mail?.sent) {
+      notify.success(`Approval mail sent to ${data.mail.to}`);
+    } else if (data.mail?.error) {
+      notify.error(`Ticket saved, but mail was not sent: ${data.mail.error}`);
+    }
     navigate(`/tickets/${data.ticket.ticketCode}`);
   }
 

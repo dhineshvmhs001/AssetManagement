@@ -21,6 +21,11 @@ export default function AddEmployee() {
       return;
     }
     notify.success(`Employee ${data.employee.employeeCode} saved`);
+    if (data.login?.created && data.login.temporaryPassword) {
+      notify.success(`Login created: ${data.login.email} / ${data.login.temporaryPassword}`);
+    } else if (data.login?.email) {
+      notify.success(`Login already exists for ${data.login.email}`);
+    }
     navigate(`/employees/${data.employee.employeeCode}`);
   }
 
@@ -29,7 +34,7 @@ export default function AddEmployee() {
       <div className="inv-head">
         <div>
           <h2>Add employee</h2>
-          <p>Fill the person details. An Employee ID (EMP-001, EMP-002…) is created automatically on save.</p>
+          <p>Fill the person details. Employee ID must be MHS plus numbers, like MHS101. Capitals are stored automatically.</p>
         </div>
       </div>
 

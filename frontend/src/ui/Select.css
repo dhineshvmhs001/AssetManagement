@@ -1,0 +1,132 @@
+.ds-select {
+  position: relative;
+  min-width: 0;
+}
+
+.ds-select__button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 11px;
+  border: 1px solid var(--ds-field-border);
+  border-radius: var(--ds-r-input);
+  background: var(--ds-field-bg);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: var(--ds-fs-body);
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: box-shadow var(--ds-dur) var(--ds-ease), border-color var(--ds-dur) var(--ds-ease);
+}
+
+.ds-select__button:focus-visible {
+  outline: none;
+  border-color: var(--input-focus);
+  box-shadow: var(--ds-ring);
+}
+
+.ds-select__button[aria-expanded='true'] {
+  border-color: var(--input-focus);
+  box-shadow: var(--ds-ring);
+}
+
+.ds-select__button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ds-select__value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ds-select__caret {
+  flex: none;
+  font-size: 9px;
+  color: var(--muted);
+  transition: transform var(--ds-dur) var(--ds-ease);
+}
+
+.ds-select__button[aria-expanded='true'] .ds-select__caret {
+  transform: rotate(180deg);
+}
+
+/* On a coloured band the lavender fill disappears; this reads on it. */
+.ds-select--on-dark .ds-select__button {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #fff;
+}
+
+.ds-select--on-dark .ds-select__caret {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.ds-select__list {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 100%;
+  max-height: 264px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 5px;
+  list-style: none;
+  background: var(--card-bg);
+  border: 1px solid var(--ds-tint-18);
+  border-radius: var(--ds-r-block);
+  box-shadow: var(--ds-card-shadow-lg);
+}
+
+.ds-select__list--up {
+  top: auto;
+  bottom: calc(100% + 4px);
+}
+
+.ds-select__option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  font-size: var(--ds-fs-body);
+  color: var(--ink);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.ds-select__option:hover,
+.ds-select__option.is-active {
+  background: var(--ds-tint-10);
+}
+
+.ds-select__option.is-selected {
+  color: var(--ds-primary);
+  font-weight: 700;
+  background: var(--ds-tint-14);
+}
+
+.ds-select__option[aria-disabled='true'] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* The count beside an option — "Damaged  12". An empty result then reads as a
+ * real answer instead of a broken filter. */
+.ds-select__count {
+  font-size: var(--ds-fs-help);
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+.ds-select__empty {
+  padding: 10px;
+  font-size: var(--ds-fs-help);
+  color: var(--muted);
+}

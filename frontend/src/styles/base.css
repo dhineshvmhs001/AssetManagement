@@ -1,4 +1,5 @@
 @import './variables.css';
+@import '../ui/tokens.css';
 
 * {
   box-sizing: border-box;
@@ -12,6 +13,7 @@ body,
 }
 
 html {
+  font-size: var(--font-size);
   color-scheme: light;
 }
 

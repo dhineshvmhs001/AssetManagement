@@ -20,7 +20,7 @@ const STATUS_LABELS = {
 
 const CONDITIONS = ['New', 'Good', 'Fair', 'Damaged'];
 const ASSET_TYPES = ['Own', 'Rental'];
-const CATEGORIES = ['Laptop', 'Monitor', 'Mouse', 'Keyboard', 'Phone'];
+const CATEGORIES = ['Laptop', 'Monitor', 'Mouse', 'Keyboard', 'Phone', 'Headphone', 'Charger'];
 
 const CATEGORY_ABBREV = {
   Laptop: 'LP',
@@ -28,6 +28,8 @@ const CATEGORY_ABBREV = {
   Mouse: 'MS',
   Keyboard: 'KB',
   Phone: 'PH',
+  Headphone: 'HD',
+  Charger: 'CH',
 };
 
 // Every value here must be distinct, or two brands share a code namespace.

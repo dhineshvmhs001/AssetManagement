@@ -1,0 +1,130 @@
+.ds-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 0;
+  border-radius: var(--ds-r-pill);
+  font-family: inherit;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    transform var(--ds-dur) var(--ds-ease),
+    box-shadow var(--ds-dur) var(--ds-ease),
+    background var(--ds-dur) var(--ds-ease);
+}
+
+.ds-btn--sm {
+  padding: 6px 12px;
+  font-size: 12.5px;
+}
+
+.ds-btn--md {
+  padding: 8px 16px;
+  font-size: var(--ds-fs-body);
+}
+
+.ds-btn--lg {
+  padding: 12px 24px;
+  font-size: 15px;
+}
+
+.ds-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.ds-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+/* Loading and disabled read identically on purpose — both mean "not now". */
+.ds-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.ds-btn--primary {
+  background: var(--ds-primary);
+  color: var(--ds-primary-ink);
+  box-shadow: var(--ds-btn-shadow);
+}
+
+.ds-btn--gradient {
+  background: var(--ds-grad);
+  color: var(--ds-primary-ink);
+  box-shadow: var(--ds-btn-shadow);
+}
+
+.ds-btn--secondary {
+  background: var(--card-bg);
+  color: var(--ds-primary);
+  border: 2px solid var(--ds-primary);
+}
+
+.ds-btn--soft {
+  background: var(--ds-tint-14);
+  color: var(--ds-primary);
+}
+
+.ds-btn--ghost {
+  background: transparent;
+  color: var(--ds-muted-strong);
+  border: 1px solid var(--ds-tint-18);
+}
+
+.ds-btn--ghost:hover:not(:disabled) {
+  color: var(--ds-text-deep);
+  background: var(--ds-tint-06);
+}
+
+.ds-btn--success {
+  background: var(--ds-success);
+  color: #fff;
+}
+
+.ds-btn--danger {
+  background: var(--ds-danger);
+  color: #fff;
+}
+
+.ds-btn--warning {
+  background: var(--ds-warning);
+  color: #3b2500;
+}
+
+.ds-btn--block {
+  width: 100%;
+}
+
+.ds-btn__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
+.ds-spinner {
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: ds-spin 0.6s linear infinite;
+}
+
+@keyframes ds-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-spinner {
+    animation-duration: 1.6s;
+  }
+}

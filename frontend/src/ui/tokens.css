@@ -1,0 +1,131 @@
+/* Design-system tokens.
+ *
+ * Everything here resolves through the skin variables in styles/variables.css,
+ * so the component library follows whatever skin and theme are active. The
+ * `crm` skin is the palette the design system was specified against; the rest
+ * of the skins get the same components in their own colours.
+ *
+ * Skins may override any --ds-* value directly (see the crm block in
+ * variables.css) — a skin selector outranks the :root defaults below.
+ */
+
+:root {
+  /* --- Brand, surfaces, text ------------------------------------------- */
+  --ds-primary: var(--accent);
+  --ds-primary-ink: var(--accent-ink);
+  --ds-grad: linear-gradient(135deg, var(--brand-from), var(--brand-to));
+  --ds-text-deep: var(--navy);
+  --ds-label: var(--navy);
+  --ds-muted-strong: color-mix(in srgb, var(--ink) 74%, transparent);
+  --ds-surface: var(--rail-icon-bg);
+  --ds-field-bg: var(--input-bg);
+  --ds-field-border: var(--input-border);
+
+  /* One hue at varying alpha. Never mix a neutral grey in beside these —
+   * next to a tinted border a grey one reads as a rendering bug. */
+  --ds-tint-06: color-mix(in srgb, var(--accent) 6%, transparent);
+  --ds-tint-10: color-mix(in srgb, var(--accent) 10%, transparent);
+  --ds-tint-14: color-mix(in srgb, var(--accent) 14%, transparent);
+  --ds-tint-18: color-mix(in srgb, var(--accent) 18%, transparent);
+  --ds-tint-28: color-mix(in srgb, var(--accent) 28%, transparent);
+
+  /* --- Status. Semantic, not brand: the same meaning is the same colour in
+   * every skin, so a red never turns out to be somebody's accent. -------- */
+  --ds-success: #059669;
+  --ds-success-d: #047857;
+  --ds-danger: #dc2626;
+  --ds-danger-d: #b91c1c;
+  --ds-warning: #f59e0b;
+  --ds-warning-d: #b45309;
+  --ds-info: #2563eb;
+  --ds-info-d: #1d4ed8;
+  --ds-gold: #f5c518;
+  --ds-neutral: var(--muted);
+
+  /* --- Elevation -------------------------------------------------------- */
+  --ds-card-shadow: var(--card-shadow);
+  --ds-card-shadow-lg: 0 12px 40px color-mix(in srgb, var(--accent) 16%, transparent);
+  --ds-btn-shadow: 0 4px 20px color-mix(in srgb, var(--accent) 35%, transparent);
+  --ds-ring: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+
+  /* --- Shape ------------------------------------------------------------ */
+  --ds-r-shell: 20px;
+  --ds-r-card: 16px;
+  --ds-r-block: 12px;
+  --ds-r-input: 10px;
+  --ds-r-pill: 999px;
+
+  /* --- Type. Fixed px, not rem: this is a dense ops tool and the row height
+   * is the point. Override these tokens to rescale the whole library. ---- */
+  --ds-mono: ui-monospace, 'SFMono-Regular', Consolas, monospace;
+  --ds-fs-h1: 24px;
+  --ds-fs-card-h: 14px;
+  --ds-fs-body: 13px;
+  --ds-fs-label: 12px;
+  --ds-fs-help: 11.5px;
+  --ds-fs-th: 11px;
+  --ds-fs-pill: 10.5px;
+
+  /* --- Motion. Short enough to feel like feedback, not animation. ------- */
+  --ds-dur: 140ms;
+  --ds-ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark mode lifts the status hues; the light values go muddy on a dark card. */
+[data-theme='dark'] {
+  --ds-success: #34d399;
+  --ds-success-d: #6ee7b7;
+  --ds-danger: #f87171;
+  --ds-danger-d: #fca5a5;
+  --ds-warning: #fbbf24;
+  --ds-warning-d: #fcd34d;
+  --ds-info: #60a5fa;
+  --ds-info-d: #93c5fd;
+  --ds-gold: #fbd54a;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ds-dur: 1ms;
+  }
+}
+
+/* Shared utilities ------------------------------------------------------- */
+
+/* Labels a sub-section inside a card. */
+.ds-eyebrow {
+  font-size: var(--ds-fs-help);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ds-muted-strong);
+}
+
+/* Identifiers — ids, serials, phone numbers, codes. Mono makes a transposed
+ * digit visible, which proportional type hides. */
+.ds-mono {
+  font-family: var(--ds-mono);
+  font-size: 0.94em;
+  letter-spacing: -0.01em;
+}
+
+.ds-muted {
+  color: var(--muted);
+}
+
+/* A value that was never recorded. Renders as an em dash, never as a guess. */
+.ds-empty-value {
+  color: var(--muted);
+}
+
+.ds-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

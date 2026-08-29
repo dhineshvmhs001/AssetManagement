@@ -71,3 +71,38 @@
   color: #9ca3af;
   max-width: 40rem;
 }
+
+.mail-test-form {
+  display: grid;
+  gap: 12px;
+  width: min(22rem, 100%);
+}
+
+.mail-test-form label {
+  display: grid;
+  gap: 6px;
+  text-align: left;
+}
+
+.mail-test-form input {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #374151;
+  background: #111;
+  color: #fff;
+}
+
+.mail-test-form button {
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 6px;
+  background: #ffa31a;
+  color: #000;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mail-test-form button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
