@@ -160,7 +160,6 @@ export default function AssetList() {
   return (
     <section>
       <PageHeader
-        title="Asset list"
         sub="Up/down selects a row, Enter opens it. Left/right switches Inventory tabs."
         right={
           <>

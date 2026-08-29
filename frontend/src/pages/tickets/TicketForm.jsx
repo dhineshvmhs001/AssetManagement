@@ -4,6 +4,7 @@ import { setNavGuard, clearNavGuard } from '../../keyboard/navGuard';
 import { getTicketOptions } from '../../api/tickets.api';
 import { listEmployees } from '../../api/employees.api';
 import FilePicker from '../inventory/FilePicker';
+import { Field, Input, Select, Textarea } from '../../ui';
 
 const EMPTY_ITEM = { category: '', quantity: '1' };
 
@@ -140,33 +141,29 @@ export default function TicketForm({ busy, onSubmit, onCancel }) {
         mouse…). On save the manager gets an approve/reject email.
       </p>
 
-      <label>
-        <span>Employee{star('employeeId')}</span>
-        <select value={form.employeeId} onChange={(e) => set('employeeId', e.target.value)} required={need('employeeId')}>
+      <Field label="Employee" required={need('employeeId')}>
+        <Select value={form.employeeId} onChange={(e) => set('employeeId', e.target.value)} aria-label="Employee">
           <option value="">{employees.length ? 'Select employee' : 'Add an employee first'}</option>
           {employees.map((person) => (
             <option key={person.id} value={person.id}>
               {person.employeeCode} — {person.name}
             </option>
           ))}
-        </select>
-      </label>
-      <label>
-        <span>Department</span>
-        <input value={selected?.department || ''} disabled placeholder="From employee" />
-      </label>
-      <label>
-        <span>Joining date</span>
-        <input value={selected?.joiningDate || ''} disabled placeholder="From employee" />
-      </label>
-      <label>
-        <span>Manager</span>
-        <input
+        </Select>
+      </Field>
+      <Field label="Department">
+        <Input value={selected?.department || ''} disabled placeholder="From employee" />
+      </Field>
+      <Field label="Joining date">
+        <Input value={selected?.joiningDate || ''} disabled placeholder="From employee" />
+      </Field>
+      <Field label="Manager">
+        <Input
           value={selected?.managerName ? `${selected.managerName}${selected.managerEmail ? ` · ${selected.managerEmail}` : ''}` : ''}
           disabled
           placeholder="From employee"
         />
-      </label>
+      </Field>
 
       <div className="ticket-items">
         <span>
@@ -174,12 +171,11 @@ export default function TicketForm({ busy, onSubmit, onCancel }) {
         </span>
         {form.items.map((item, index) => (
           <div className="ticket-item-row" key={index}>
-            <label>
-              <span>Category</span>
-              <select
+            <Field label="Category">
+              <Select
                 value={item.category}
                 onChange={(e) => setItem(index, 'category', e.target.value)}
-                required
+                aria-label={`Asset category ${index + 1}`}
               >
                 <option value="">Select category</option>
                 {categories.map((name) => (
@@ -191,11 +187,10 @@ export default function TicketForm({ busy, onSubmit, onCancel }) {
                     {name}
                   </option>
                 ))}
-              </select>
-            </label>
-            <label>
-              <span>Qty</span>
-              <input
+              </Select>
+            </Field>
+            <Field label="Qty">
+              <Input
                 type="number"
                 min="1"
                 max="99"
@@ -203,7 +198,7 @@ export default function TicketForm({ busy, onSubmit, onCancel }) {
                 onChange={(e) => setItem(index, 'quantity', e.target.value)}
                 required
               />
-            </label>
+            </Field>
             <button
               type="button"
               className="btn ghost"
@@ -221,24 +216,21 @@ export default function TicketForm({ busy, onSubmit, onCancel }) {
         ) : null}
       </div>
 
-      <label>
-        <span>Priority{star('priority')}</span>
-        <select value={form.priority} onChange={(e) => set('priority', e.target.value)} required={need('priority')}>
+      <Field label="Priority" required={need('priority')}>
+        <Select value={form.priority} onChange={(e) => set('priority', e.target.value)} aria-label="Priority">
           {priorities.map((item) => (
             <option key={item} value={item}>
               {PRIORITY_LABEL[item] || item}
             </option>
           ))}
-        </select>
-      </label>
-      <label>
-        <span>Need date{star('needDate')}</span>
-        <input type="date" value={form.needDate} onChange={(e) => set('needDate', e.target.value)} required={need('needDate')} />
-      </label>
-      <label className="inv-span-2">
-        <span>Remarks</span>
-        <textarea value={form.remarks} onChange={(e) => set('remarks', e.target.value)} rows={3} />
-      </label>
+        </Select>
+      </Field>
+      <Field label="Need date" required={need('needDate')}>
+        <Input type="date" value={form.needDate} onChange={(e) => set('needDate', e.target.value)} required={need('needDate')} />
+      </Field>
+      <Field label="Remarks" full>
+        <Textarea value={form.remarks} onChange={(e) => set('remarks', e.target.value)} rows={3} />
+      </Field>
 
       {!employees.length ? (
         <p className="inv-note">

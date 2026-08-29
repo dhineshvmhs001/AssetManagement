@@ -14,5 +14,6 @@ router.post('/', optionalTicketFiles, ticketsController.create);
 router.get('/:code/files/:kind/:stored', ticketsController.file);
 router.get('/:code', ticketsController.getOne);
 router.post('/:code/decision', ticketsController.decideInApp);
+router.post('/:code/dispatch', ticketsController.dispatchToTeam);
 
 module.exports = router;

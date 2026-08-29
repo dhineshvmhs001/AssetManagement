@@ -10,6 +10,7 @@ import {
   submitPrecheck,
 } from '../../api/maintenance.api';
 import { notify } from '../../ui/notify';
+import { Field, Input, Select, Textarea } from '../../ui';
 import FilePicker from '../inventory/FilePicker';
 import '../inventory/Inventory.css';
 
@@ -166,10 +167,7 @@ export default function Maintenance() {
     return (
       <section>
         <div className="inv-head">
-          <div>
-            <h2>Maintenance</h2>
-            <p>Only Asset Team, Asset Manager, and Admin can inspect returned stock.</p>
-          </div>
+          <p>Only Asset Team, Asset Manager, and Admin can inspect returned stock.</p>
         </div>
       </section>
     );
@@ -181,10 +179,7 @@ export default function Maintenance() {
   return (
     <section>
       <div className="inv-head">
-        <div>
-          <h2>Maintenance</h2>
-          <p>Returned assets wait here. Inspect, then they go back to stock, repair, or out of service.</p>
-        </div>
+        <p>Returned assets wait here. Inspect, then they go back to stock, repair, or out of service.</p>
       </div>
 
       <nav className="inv-sub" aria-label="Maintenance">
@@ -362,9 +357,8 @@ export default function Maintenance() {
           ) : null}
 
           <div className="inv-form" style={{ marginTop: 12 }}>
-            <label>
-              <span>Result *</span>
-              <select value={form.result} onChange={(e) => set('result', e.target.value)} required>
+            <Field label="Result" required>
+              <Select value={form.result} onChange={(e) => set('result', e.target.value)} aria-label="Result">
                 {(options.results.length
                   ? options.results
                   : [
@@ -379,37 +373,32 @@ export default function Maintenance() {
                     {item.label}
                   </option>
                 ))}
-              </select>
-            </label>
-            <label>
-              <span>Condition after check</span>
-              <select value={form.condition} onChange={(e) => set('condition', e.target.value)}>
+              </Select>
+            </Field>
+            <Field label="Condition after check">
+              <Select value={form.condition} onChange={(e) => set('condition', e.target.value)} aria-label="Condition after check">
                 {options.conditions.map((item) => (
                   <option key={item} value={item}>
                     {item}
                   </option>
                 ))}
-              </select>
-            </label>
-            <label>
-              <span>Accessories</span>
-              <input
+              </Select>
+            </Field>
+            <Field label="Accessories">
+              <Input
                 value={form.accessories}
                 onChange={(e) => set('accessories', e.target.value)}
                 placeholder="Charger, bag, mouse present?"
               />
-            </label>
-            <label className="inv-span-2">
-              <span>
-                Notes{form.result !== 'PASS' ? ' *' : ''}
-              </span>
-              <textarea
+            </Field>
+            <Field label="Notes" required={form.result !== 'PASS'} full>
+              <Textarea
                 value={form.notes}
                 onChange={(e) => set('notes', e.target.value)}
                 rows={2}
                 required={form.result !== 'PASS'}
               />
-            </label>
+            </Field>
 
             <label className="assign-all" style={{ alignSelf: 'center' }}>
               <input
@@ -421,42 +410,38 @@ export default function Maintenance() {
             </label>
             {form.warrantyApplicable ? (
               <>
-                <label>
-                  <span>Warranty status</span>
-                  <select value={form.warrantyStatus} onChange={(e) => set('warrantyStatus', e.target.value)}>
+                <Field label="Warranty status">
+                  <Select value={form.warrantyStatus} onChange={(e) => set('warrantyStatus', e.target.value)} aria-label="Warranty status">
                     {options.warrantyStatuses.map((item) => (
                       <option key={item} value={item}>
                         {item}
                       </option>
                     ))}
-                  </select>
-                </label>
-                <label>
-                  <span>Warranty expiry</span>
-                  <input
+                  </Select>
+                </Field>
+                <Field label="Warranty expiry">
+                  <Input
                     type="date"
                     value={form.warrantyExpiry}
                     onChange={(e) => set('warrantyExpiry', e.target.value)}
                   />
-                </label>
+                </Field>
                 {claimNeeded ? (
-                  <label>
-                    <span>Claim number *</span>
-                    <input
+                  <Field label="Claim number" required>
+                    <Input
                       value={form.claimNumber}
                       onChange={(e) => set('claimNumber', e.target.value)}
                       required
                     />
-                  </label>
+                  </Field>
                 ) : null}
               </>
             ) : null}
 
             {needsRepair ? (
               <>
-                <label>
-                  <span>Service provider</span>
-                  <input
+                <Field label="Service provider">
+                  <Input
                     list="maint-vendors"
                     value={form.serviceProvider}
                     onChange={(e) => set('serviceProvider', e.target.value)}
@@ -467,36 +452,33 @@ export default function Maintenance() {
                       <option key={name} value={name} />
                     ))}
                   </datalist>
-                </label>
-                <label>
-                  <span>Repair status</span>
-                  <select value={form.repairStatus} onChange={(e) => set('repairStatus', e.target.value)}>
+                </Field>
+                <Field label="Repair status">
+                  <Select value={form.repairStatus} onChange={(e) => set('repairStatus', e.target.value)} aria-label="Repair status">
                     {options.repairStatuses.map((item) => (
                       <option key={item} value={item}>
                         {item}
                       </option>
                     ))}
-                  </select>
-                </label>
-                <label>
-                  <span>Estimated cost</span>
-                  <input
+                  </Select>
+                </Field>
+                <Field label="Estimated cost">
+                  <Input
                     type="number"
                     min="0"
                     step="0.01"
                     value={form.repairCost}
                     onChange={(e) => set('repairCost', e.target.value)}
                   />
-                </label>
-                <label className="inv-span-2">
-                  <span>What needs repair *</span>
-                  <textarea
+                </Field>
+                <Field label="What needs repair" required full>
+                  <Textarea
                     value={form.repairDetails}
                     onChange={(e) => set('repairDetails', e.target.value)}
                     rows={2}
                     required
                   />
-                </label>
+                </Field>
               </>
             ) : null}
 
@@ -528,11 +510,11 @@ export default function Maintenance() {
           <h3>Complete repair — {repairing.assetCode}</h3>
           <p className="inv-muted">{repairing.openCheck?.repairDetails || repairing.openCheck?.notes || ''}</p>
           <div className="inv-form" style={{ marginTop: 12 }}>
-            <label>
-              <span>Outcome *</span>
-              <select
+            <Field label="Outcome" required>
+              <Select
                 value={repairForm.outcome}
                 onChange={(e) => setRepairForm((prev) => ({ ...prev, outcome: e.target.value }))}
+                aria-label="Outcome"
               >
                 {(options.completeOutcomes.length
                   ? options.completeOutcomes
@@ -546,26 +528,24 @@ export default function Maintenance() {
                     {item.label}
                   </option>
                 ))}
-              </select>
-            </label>
-            <label>
-              <span>Final cost</span>
-              <input
+              </Select>
+            </Field>
+            <Field label="Final cost">
+              <Input
                 type="number"
                 min="0"
                 step="0.01"
                 value={repairForm.repairCost}
                 onChange={(e) => setRepairForm((prev) => ({ ...prev, repairCost: e.target.value }))}
               />
-            </label>
-            <label className="inv-span-2">
-              <span>Notes</span>
-              <textarea
+            </Field>
+            <Field label="Notes" full>
+              <Textarea
                 value={repairForm.notes}
                 onChange={(e) => setRepairForm((prev) => ({ ...prev, notes: e.target.value }))}
                 rows={2}
               />
-            </label>
+            </Field>
           </div>
           <div className="inv-form-actions">
             <button type="button" className="btn ghost" onClick={() => setRepairing(null)}>

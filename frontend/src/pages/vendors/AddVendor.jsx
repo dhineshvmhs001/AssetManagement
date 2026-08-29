@@ -27,10 +27,7 @@ export default function AddVendor() {
   return (
     <section>
       <div className="inv-head">
-        <div>
-          <h2>Add vendor</h2>
-          <p>Fill the supplier details. A Vendor ID (VEN-001, VEN-002…) is created automatically on save.</p>
-        </div>
+        <p>Fill the supplier details. A Vendor ID (VEN-001, VEN-002…) is created automatically on save.</p>
       </div>
 
       <VendorForm

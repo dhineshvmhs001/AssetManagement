@@ -35,6 +35,10 @@ export function decideTicket(code, action) {
   return post(`/tickets/${encodeURIComponent(code)}/decision`, { action });
 }
 
+export function dispatchTicket(code) {
+  return post(`/tickets/${encodeURIComponent(code)}/dispatch`);
+}
+
 export function getTicket(code) {
   return get(`/tickets/${encodeURIComponent(code)}`);
 }

@@ -47,10 +47,7 @@ export default function MyAssets() {
   return (
     <section>
       <div className="inv-head">
-        <div>
-          <h2>My assets</h2>
-          <p>What is currently assigned to you.</p>
-        </div>
+        <p>What is currently assigned to you.</p>
       </div>
       <div className="inv-card">
         <p>

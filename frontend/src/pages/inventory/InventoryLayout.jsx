@@ -31,7 +31,7 @@ export default function InventoryLayout() {
 
   useEffect(() => {
     function onKey(e) {
-      if (kbd?.helpOpen || isTypingTarget(e.target)) {
+      if (kbd?.helpOpen || isTypingTarget(e.target) || e.target.closest?.('form')) {
         return;
       }
       if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') {

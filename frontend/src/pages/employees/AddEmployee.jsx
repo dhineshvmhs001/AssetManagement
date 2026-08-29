@@ -32,10 +32,7 @@ export default function AddEmployee() {
   return (
     <section>
       <div className="inv-head">
-        <div>
-          <h2>Add employee</h2>
-          <p>Fill the person details. Employee ID must be MHS plus numbers, like MHS101. Capitals are stored automatically.</p>
-        </div>
+        <p>Fill the person details. Employee ID must be MHS plus numbers, like MHS101. Capitals are stored automatically.</p>
       </div>
 
       <EmployeeForm

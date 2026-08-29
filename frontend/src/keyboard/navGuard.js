@@ -16,8 +16,8 @@ export function allowNav() {
   return guard ? guard() : true;
 }
 
-// True when the visible page has a form, in which case Tab belongs to the
-// form's own fields rather than to the sidebar rail.
+// True when the visible page has a form. Used so page shortcuts (inventory
+// sub-tabs) do not steal arrow keys from field-to-field movement.
 export function pageHasForm() {
-  return Boolean(document.querySelector('form'));
+  return Boolean(document.querySelector('.app-content form, .inv form, form.inv-form'));
 }

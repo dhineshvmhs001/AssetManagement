@@ -1,68 +1,33 @@
-import { useEffect, useState } from 'react';
-import { getTest } from '../../api/test.api';
+import { LOADERS } from '../../ui/loaders';
+import LogoLoader from '../../ui/LogoLoader';
+import { useTheme } from '../../theme/ThemeProvider';
 import './Test.css';
 
 export default function Test() {
-  const [result, setResult] = useState(null);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    getTest()
-      .then((data) => setResult(data))
-      .catch(() => setError('Could not reach GET /api/test.'));
-  }, []);
-
-  const connected = result?.connected === true;
+  const { loader, setLoader } = useTheme();
 
   return (
     <section className="test-page">
-      <p className="test-hub" role="status" aria-live="polite">
-        <span className="test-hub-start">Load</span>
-        <span className="test-hub-end">ing</span>
-      </p>
-
-      {error && <p className="test-status fail">{error}</p>}
-
-      {result && (
-        <>
-          <p className={`test-status ${connected ? 'ok' : 'fail'}`}>
-            {connected ? 'Connection successful' : 'Connection failed'}
-          </p>
-          <p>Database: {result.database || 'Asset_Management'}</p>
-          {connected && result.now && <p>Server time: {result.now}</p>}
-          {!connected && result.error && <p className="test-error">{result.error}</p>}
-        </>
-      )}
+      <header className="test-head">
+        <h1>Logo loaders</h1>
+        <p>Click one to use it while pages load. You can also pick it in Settings.</p>
+      </header>
+      <div className="test-grid">
+        {LOADERS.map((item) => (
+          <button
+            key={item.kind}
+            type="button"
+            className={`test-card${loader === item.kind ? ' is-on' : ''}`}
+            onClick={() => setLoader(item.kind)}
+          >
+            <span className="test-num">{item.id || '—'}</span>
+            <div className="test-stage">
+              <LogoLoader kind={item.kind} />
+            </div>
+            <h2>{item.name}</h2>
+          </button>
+        ))}
+      </div>
     </section>
   );
-}
-
-function test(){
-  const checks = [];
-
-  const assert = (label, passed) => {
-    checks.push({ label, passed });
-    console.log(`${passed ? 'PASS' : 'FAIL'} - ${label}`);
-  };
-
-  return getTest()
-    .then((data) => {
-      assert('response is an object', data !== null && typeof data === 'object');
-      assert('has boolean connected flag', typeof data?.connected === 'boolean');
-
-      if (data?.connected === true) {
-        assert('connected response reports a database', typeof data.database === 'string' && data.database.length > 0);
-        assert('connected response reports server time', Boolean(data.now));
-      } else {
-        assert('failed response reports an error', Boolean(data?.error));
-      }
-    })
-    .catch((err) => {
-      assert(`GET /api/test reachable (${err?.message || err})`, false);
-    })
-    .then(() => {
-      const failed = checks.filter((c) => !c.passed);
-      console.log(`${checks.length - failed.length}/${checks.length} checks passed`);
-      return { checks, ok: failed.length === 0 };
-    });
 }

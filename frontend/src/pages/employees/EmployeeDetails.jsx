@@ -67,7 +67,7 @@ export default function EmployeeDetails() {
     return <p className="inv-error">{error}</p>;
   }
   if (!employee) {
-    return <p className="inv-muted">Loading…</p>;
+    return <div className="page-wait" aria-busy="true" />;
   }
 
   return (

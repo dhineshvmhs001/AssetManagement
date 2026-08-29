@@ -71,7 +71,7 @@ export default function EditAsset() {
     return <p className="inv-error">{error}</p>;
   }
   if (!initial) {
-    return <p className="inv-muted">Loading…</p>;
+    return <div className="page-wait" aria-busy="true" />;
   }
 
   return (

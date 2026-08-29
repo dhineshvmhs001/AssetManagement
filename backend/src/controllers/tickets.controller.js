@@ -190,6 +190,24 @@ function canDecide(user, row) {
   );
 }
 
+function canDispatch(user, row) {
+  return Boolean(
+    user &&
+    row &&
+    row.status === 'WITH_ASSET_MANAGER' &&
+    [ROLES.ADMIN, ROLES.ASSET_MANAGER].includes(user.role),
+  );
+}
+
+function canAssignStock(user, row) {
+  return Boolean(
+    user &&
+    row &&
+    row.status === 'WITH_ASSET_TEAM' &&
+    [ROLES.ADMIN, ROLES.ASSET_TEAM].includes(user.role),
+  );
+}
+
 function toPublic(row, user) {
   if (!row) {
     return null;
@@ -218,6 +236,8 @@ function toPublic(row, user) {
     status: row.status,
     statusLabel: STATUSES[row.status] || row.status,
     canDecide: canDecide(user, row),
+    canDispatch: canDispatch(user, row),
+    canAssignStock: canAssignStock(user, row),
     ...publicTicketFiles(row.id, row.attachments),
     createdBy: row.created_by,
     createdAt: row.created_at,
@@ -736,4 +756,35 @@ async function decideInApp(req, res) {
   return res.json({ ok: true, ticket: { ...toPublic(fresh, req.user), allocatedAssets } });
 }
 
-module.exports = { list, create, getOne, file, options, decideForm, decideSubmit, decideInApp };
+async function dispatchToTeam(req, res) {
+  const row = await findByCode(String(req.params.code || '').trim());
+  if (!row) {
+    return res.status(404).json({ ok: false, error: 'Ticket not found' });
+  }
+  if (!canDispatch(req.user, row)) {
+    return res.status(403).json({ ok: false, error: 'Asset Manager sends this ticket to Asset Team first' });
+  }
+  const updated = await query(
+    `UPDATE tickets SET status = 'WITH_ASSET_TEAM'
+     WHERE id = $1 AND status = 'WITH_ASSET_MANAGER'
+     RETURNING *`,
+    [row.id],
+  );
+  if (!updated.rows[0]) {
+    return res.status(409).json({ ok: false, error: 'This ticket was already sent to Asset Team' });
+  }
+  await logActivity({
+    user: req.user,
+    module: 'Tickets',
+    action: 'Send to team',
+    description: `Sent ${row.ticket_code} to Asset Team`,
+    entityType: 'Ticket',
+    entityId: row.id,
+    ip: req.ip,
+  });
+  const fresh = await findByCode(row.ticket_code);
+  const allocatedAssets = await assetsForTicket(fresh.id);
+  return res.json({ ok: true, ticket: { ...toPublic(fresh, req.user), allocatedAssets } });
+}
+
+module.exports = { list, create, getOne, file, options, decideForm, decideSubmit, decideInApp, dispatchToTeam };

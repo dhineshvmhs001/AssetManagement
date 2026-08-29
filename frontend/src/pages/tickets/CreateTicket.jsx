@@ -32,10 +32,7 @@ export default function CreateTicket() {
   return (
     <section>
       <div className="inv-head">
-        <div>
-          <h2>Create ticket</h2>
-          <p>HR asset request. A Ticket ID (TK-2026-0001…) is created automatically on save.</p>
-        </div>
+        <p>HR asset request. A Ticket ID (TK-2026-0001…) is created automatically on save.</p>
       </div>
 
       <TicketForm

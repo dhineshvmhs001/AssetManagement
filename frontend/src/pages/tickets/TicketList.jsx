@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { listTickets, decideTicket } from '../../api/tickets.api';
+import { listTickets, decideTicket, dispatchTicket } from '../../api/tickets.api';
 import { useAuth } from '../../auth/AuthProvider';
 import { notify } from '../../ui/notify';
+import { Field, FilterRow, Input, Select } from '../../ui';
 
 const EMPTY = { search: '', status: '' };
 const PAGE_SIZE = 20;
@@ -22,6 +23,8 @@ export default function TicketList() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const isManager = user?.role === 'MANAGER';
+  const canCreate = ['ADMIN', 'HR'].includes(user?.role);
+  const showActions = ['MANAGER', 'ADMIN', 'ASSET_MANAGER', 'ASSET_TEAM'].includes(user?.role);
   const [filters, setFilters] = useState(EMPTY);
   const [page, setPage] = useState(1);
   const [data, setData] = useState(EMPTY_DATA);
@@ -60,6 +63,22 @@ export default function TicketList() {
     });
   }
 
+  async function sendToTeam(ticket) {
+    setBusy(ticket.id);
+    const data = await dispatchTicket(ticket.ticketCode);
+    setBusy(null);
+    if (!data.ok) {
+      notify.error(data.error || 'Could not send ticket to Asset Team');
+      return;
+    }
+    notify.success(`${ticket.ticketCode} sent to Asset Team`);
+    listTickets({ ...filters, page, limit: PAGE_SIZE }).then((res) => {
+      if (res.ok) {
+        setData(res);
+      }
+    });
+  }
+
   const pages = data.pages || 1;
   const from = data.total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
   const to = Math.min(page * PAGE_SIZE, data.total);
@@ -67,37 +86,43 @@ export default function TicketList() {
   return (
     <section>
       <div className="inv-head">
-        <div>
-          <h2>{isManager ? 'Team tickets' : 'Ticket list'}</h2>
-          <p>
-            {isManager
-              ? 'Requests for people who report to you. Approve or reject here, or use the email links.'
-              : 'HR asset requests. Create the employee first, then raise a ticket.'}
-          </p>
-        </div>
-        {isManager ? null : (
+        <p>
+          {isManager
+            ? 'Requests for people who report to you. Approve or reject here, or use the email links.'
+            : user?.role === 'ASSET_MANAGER'
+              ? 'After a manager approves, send the ticket to Asset Team. They assign the asset to the employee.'
+              : user?.role === 'ASSET_TEAM'
+                ? 'Tickets sent to the team appear here. Assign matching stock on Assignment.'
+                : user?.role === 'HR'
+                  ? 'Create the employee first, then raise a ticket. Manager approves, then Asset Manager sends it to Asset Team.'
+                  : 'Manager approves, Asset Manager sends to Asset Team, then stock is assigned on Assignment.'}
+        </p>
+        {canCreate ? (
           <Link className="btn primary" to="/tickets/add" tabIndex={-1}>
             Create ticket
           </Link>
-        )}
+        ) : null}
       </div>
 
-      <div className="inv-toolbar">
-        <input
-          className="inv-search"
-          placeholder="Search ticket ID, employee…"
-          value={filters.search}
-          onChange={(e) => set('search', e.target.value)}
-        />
-        <select value={filters.status} onChange={(e) => set('status', e.target.value)}>
-          <option value="">All statuses</option>
-          <option value="AWAITING_MANAGER">Awaiting manager approval</option>
-          <option value="WITH_ASSET_MANAGER">With Asset Manager</option>
-          <option value="WITH_ASSET_TEAM">Assigned to Asset Team</option>
-          <option value="CLOSED">Closed</option>
-          <option value="REJECTED">Not approved</option>
-        </select>
-      </div>
+      <FilterRow>
+        <Field label="Search" style={{ flex: '1 1 240px' }}>
+          <Input
+            placeholder="Search ticket ID, employee…"
+            value={filters.search}
+            onChange={(e) => set('search', e.target.value)}
+          />
+        </Field>
+        <Field label="Status" style={{ flex: '0 1 220px' }}>
+          <Select value={filters.status} onChange={(e) => set('status', e.target.value)} aria-label="Filter by status">
+            <option value="">All statuses</option>
+            <option value="AWAITING_MANAGER">Awaiting manager approval</option>
+            <option value="WITH_ASSET_MANAGER">With Asset Manager</option>
+            <option value="WITH_ASSET_TEAM">Assigned to Asset Team</option>
+            <option value="CLOSED">Closed</option>
+            <option value="REJECTED">Not approved</option>
+          </Select>
+        </Field>
+      </FilterRow>
 
       <div className="inv-table-wrap">
         <table className="inv-table">
@@ -106,7 +131,7 @@ export default function TicketList() {
               {COLUMNS.map((col) => (
                 <th key={col.key}>{col.label}</th>
               ))}
-              {isManager ? <th></th> : null}
+              {showActions ? <th></th> : null}
             </tr>
           </thead>
           <tbody>
@@ -129,7 +154,7 @@ export default function TicketList() {
                 <td>
                   <span className={`st st-${String(ticket.status || '').toLowerCase()}`}>{ticket.statusLabel}</span>
                 </td>
-                {isManager ? (
+                {showActions ? (
                   <td>
                     {ticket.canDecide ? (
                       <span className="inv-actions">
@@ -156,6 +181,27 @@ export default function TicketList() {
                           Reject
                         </button>
                       </span>
+                    ) : ticket.canDispatch ? (
+                      <button
+                        type="button"
+                        className="btn primary"
+                        disabled={busy === ticket.id}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          sendToTeam(ticket);
+                        }}
+                      >
+                        Send to Asset Team
+                      </button>
+                    ) : ticket.canAssignStock ? (
+                      <Link
+                        className="btn primary"
+                        to={`/assignment?ticket=${encodeURIComponent(ticket.ticketCode)}`}
+                        tabIndex={-1}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Assign assets
+                      </Link>
                     ) : (
                       '—'
                     )}
@@ -165,7 +211,7 @@ export default function TicketList() {
             ))}
             {!data.tickets.length && (
               <tr>
-                <td colSpan={COLUMNS.length + (isManager ? 1 : 0)} className="inv-empty">
+                <td colSpan={COLUMNS.length + (showActions ? 1 : 0)} className="inv-empty">
                   {isManager
                     ? 'No tickets for your team yet.'
                     : 'No tickets yet. HR creates one after the employee exists.'}

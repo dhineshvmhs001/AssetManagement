@@ -29,10 +29,7 @@ export default function AddAsset() {
   return (
     <section>
       <div className="inv-head">
-        <div>
-          <h2>Add asset</h2>
-          <p>Asset code is generated as Category + Brand + Sequence. Example: LP-DL-0001.</p>
-        </div>
+        <p>Asset code is generated as Category + Brand + Sequence. Example: LP-DL-0001.</p>
       </div>
 
       <AssetForm

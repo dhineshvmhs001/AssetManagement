@@ -1,0 +1,455 @@
+/* Assignment is a ticket-driven task — ticket, then matching stock, then terms —
+   so the form is split into numbered steps with a running summary beside it. */
+
+.asg-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  align-items: start;
+  gap: 16px;
+}
+
+.asg-main {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+/* ---------- steps ---------- */
+
+.asg-step {
+  background: var(--card-bg);
+  border: 1px solid var(--card-line);
+  border-radius: 22px;
+  box-shadow: var(--card-shadow);
+  padding: 18px 20px 20px;
+}
+
+.asg-step-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.asg-step-num {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.asg-step-title {
+  min-width: 0;
+  flex: 1;
+}
+
+.asg-step-title h3 {
+  margin: 0;
+  font-size: 0.9375rem;
+}
+
+.asg-step-title p {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+
+.asg-chip {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--muted) 12%, transparent);
+  color: var(--muted);
+}
+
+.asg-chip.is-on {
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: var(--accent);
+}
+
+/* Steps 2 and 3 need the ticket before they mean anything. */
+.asg-step.is-locked {
+  opacity: 0.5;
+}
+
+.asg-step.is-locked .asg-step-num {
+  background: color-mix(in srgb, var(--muted) 14%, transparent);
+  color: var(--muted);
+}
+
+.asg-step-body.is-locked {
+  pointer-events: none;
+  user-select: none;
+}
+
+.asg-lock-note {
+  margin: 0;
+  padding: 18px 12px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+
+/* ---------- ticket context ---------- */
+
+.asg-ticket {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+.asg-ticket-who {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.asg-avatar {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--brand-from), var(--brand-to));
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.asg-who-name {
+  min-width: 0;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.asg-who-name span {
+  display: block;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.asg-quotas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.asg-quota-chip {
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: var(--card-bg);
+  border: 1px solid var(--card-line);
+  color: var(--muted);
+}
+
+.asg-quota-chip.is-done {
+  background: color-mix(in srgb, var(--ok) 16%, transparent);
+  border-color: color-mix(in srgb, var(--ok) 34%, transparent);
+  color: var(--ok);
+}
+
+/* ---------- asset picker ---------- */
+
+.asg-pick-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.asg-pick-tools .ds-input {
+  flex: 1;
+  min-width: 200px;
+}
+
+.asg-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.asg-toggle input {
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.asg-list {
+  max-height: 300px;
+  overflow: auto;
+  display: grid;
+  gap: 6px;
+  padding: 6px;
+  border: 1px solid var(--card-line);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--muted) 4%, transparent);
+}
+
+.asg-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin: 0;
+  padding: 9px 12px 9px 14px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: var(--card-bg);
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.asg-row::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.asg-row:hover {
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.asg-row.is-on {
+  background: color-mix(in srgb, var(--accent) 8%, var(--card-bg));
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+.asg-row.is-on::before {
+  opacity: 1;
+}
+
+.asg-row input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  flex-shrink: 0;
+  accent-color: var(--accent);
+}
+
+.asg-row-main {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+}
+
+.asg-code {
+  font-weight: 700;
+  font-size: 0.8125rem;
+}
+
+.asg-tag {
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--muted) 14%, transparent);
+  color: var(--muted);
+}
+
+.asg-desc {
+  font-size: 0.8125rem;
+  color: var(--ink);
+}
+
+.asg-serial {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.asg-empty {
+  padding: 22px 12px;
+  margin: 0;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+
+/* ---------- summary rail ---------- */
+
+.asg-side {
+  position: sticky;
+  top: 8px;
+  min-width: 0;
+}
+
+.asg-summary {
+  background: var(--card-bg);
+  border: 1px solid var(--card-line);
+  border-radius: 22px;
+  box-shadow: var(--card-shadow);
+  padding: 18px;
+  display: grid;
+  gap: 14px;
+}
+
+.asg-summary h3 {
+  margin: 0;
+  font-size: 0.9375rem;
+}
+
+.asg-blank {
+  margin: 0;
+  padding: 12px;
+  border: 1px dashed var(--card-line);
+  border-radius: 12px;
+  color: var(--muted);
+  font-size: 0.8125rem;
+  text-align: center;
+}
+
+.asg-picked {
+  display: grid;
+  gap: 6px;
+  max-height: 190px;
+  overflow: auto;
+}
+
+.asg-picked-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px 7px 10px;
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--accent) 9%, transparent);
+  font-size: 0.75rem;
+}
+
+.asg-picked-sub {
+  color: var(--muted);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.asg-drop {
+  margin-left: auto;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.asg-drop:hover {
+  background: color-mix(in srgb, var(--danger) 14%, transparent);
+  color: var(--danger);
+}
+
+.asg-meta {
+  display: grid;
+  gap: 7px;
+  padding-top: 12px;
+  border-top: 1px solid var(--card-line);
+  font-size: 0.8125rem;
+}
+
+.asg-meta div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.asg-meta-key {
+  color: var(--muted);
+}
+
+.asg-meta-val {
+  font-weight: 600;
+  text-align: right;
+}
+
+.asg-go {
+  width: 100%;
+  justify-content: center;
+}
+
+.asg-note {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* ---------- open assignments ---------- */
+
+.asg-open,
+.asg-return {
+  margin-top: 16px;
+}
+
+.asg-open {
+  background: var(--card-bg);
+  border: 1px solid var(--card-line);
+  border-radius: 22px;
+  box-shadow: var(--card-shadow);
+  padding: 18px 20px 20px;
+}
+
+.asg-table {
+  border: 0;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.asg-wide {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 1080px) {
+  .asg-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .asg-side {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .asg-serial {
+    margin-left: 0;
+  }
+}

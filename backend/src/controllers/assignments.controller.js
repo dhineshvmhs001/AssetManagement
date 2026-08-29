@@ -13,7 +13,8 @@ const {
 } = require('../lib/uploads');
 
 const WRITE_ROLES = [ROLES.ADMIN, ROLES.ASSET_MANAGER, ROLES.ASSET_TEAM];
-const ASSIGNABLE_TICKETS = ['WITH_ASSET_MANAGER', 'WITH_ASSET_TEAM'];
+const TICKET_ASSIGN_ROLES = [ROLES.ADMIN, ROLES.ASSET_TEAM];
+const ASSIGNABLE_TICKETS = ['WITH_ASSET_TEAM'];
 const ASSIGNMENT_TYPES = ['Permanent', 'Probation', 'Replacement'];
 const RETURN_REASONS = [
   'End of assignment',
@@ -179,16 +180,19 @@ async function options(req, res) {
      WHERE status = 'ACTIVE'
      ORDER BY name`,
   );
-  const tickets = await query(
-    `SELECT t.id, t.ticket_code, t.employee_id, t.status, t.category, t.quantity,
-            e.employee_code, e.name AS employee_name
-     FROM tickets t
-     JOIN employees e ON e.id = t.employee_id
-     WHERE t.status = ANY($1::text[])
-     ORDER BY t.created_at DESC
-     LIMIT 100`,
-    [ASSIGNABLE_TICKETS],
-  );
+  const canAssignTickets = TICKET_ASSIGN_ROLES.includes(req.user.role);
+  const tickets = canAssignTickets
+    ? await query(
+        `SELECT t.id, t.ticket_code, t.employee_id, t.status, t.category, t.quantity,
+                e.employee_code, e.name AS employee_name
+         FROM tickets t
+         JOIN employees e ON e.id = t.employee_id
+         WHERE t.status = ANY($1::text[])
+         ORDER BY t.created_at DESC
+         LIMIT 100`,
+        [ASSIGNABLE_TICKETS],
+      )
+    : { rows: [] };
   const itemMap = {};
   if (tickets.rows.length) {
     const items = await query(
@@ -292,8 +296,11 @@ async function mine(req, res) {
 }
 
 async function create(req, res) {
-  if (!canWrite(req.user)) {
-    return res.status(403).json({ ok: false, error: 'Not allowed for this role' });
+  if (!TICKET_ASSIGN_ROLES.includes(req.user.role)) {
+    return res.status(403).json({
+      ok: false,
+      error: 'Asset Team assigns stock after Asset Manager sends the ticket to them',
+    });
   }
 
   const employeeId = emptyToNull(req.body?.employeeId);
@@ -319,6 +326,9 @@ async function create(req, res) {
   const accessories = emptyToNull(req.body?.accessories);
   const remarks = emptyToNull(req.body?.remarks);
 
+  if (!ticketId) {
+    return res.status(400).json({ ok: false, error: 'Pick a ticket' });
+  }
   if (!employeeId) {
     return res.status(400).json({ ok: false, error: 'Pick an active employee' });
   }
@@ -358,8 +368,11 @@ async function create(req, res) {
       if (!ticket) {
         throw badRequest('Ticket not found');
       }
+      if (!TICKET_ASSIGN_ROLES.includes(req.user.role)) {
+        throw badRequest('Asset Team assigns stock after Asset Manager sends the ticket to them');
+      }
       if (!ASSIGNABLE_TICKETS.includes(ticket.status)) {
-        throw badRequest('This ticket is not waiting for assignment');
+        throw badRequest('Asset Team can assign this ticket after Asset Manager sends it to them');
       }
       if (ticket.employee_id !== employeeId) {
         throw badRequest('Ticket employee does not match the selected employee');
@@ -480,9 +493,8 @@ async function create(req, res) {
       user: req.user,
       module: 'Assignment',
       action: 'Assign',
-      description: `Assigned ${created.map((row) => row.assetCode).join(', ')} to ${employee.rows[0].employee_code}${
-        ticket ? ` (${ticket.ticket_code})` : ''
-      }`,
+      description: `Assigned ${created.map((row) => row.assetCode).join(', ')} to ${employee.rows[0].employee_code}${ticket ? ` (${ticket.ticket_code})` : ''
+        }`,
       entityType: 'Employee',
       entityId: employeeId,
       ip: req.ip,

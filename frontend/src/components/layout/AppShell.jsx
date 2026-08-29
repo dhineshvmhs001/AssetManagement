@@ -1,7 +1,7 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthProvider';
 import { navForRole } from '../../auth/access';
-import ThemeToggle from '../common/ThemeToggle';
+import SettingsButton from '../common/Settings';
 import { Icon } from './NavIcons';
 import './AppShell.css';
 
@@ -35,7 +35,7 @@ export default function AppShell() {
   const current = items.find((item) =>
     item.to === '/inventory' ? inInventory : pathname === item.to || pathname.startsWith(`${item.to}/`),
   );
-  const title = current?.label === 'Dashboard' ? 'My Dashboard' : current?.label || 'Asset Management';
+  const title = current?.label || 'Asset Management';
 
   return (
     <div className="app-frame">
@@ -61,9 +61,12 @@ export default function AppShell() {
               </NavLink>
             ))}
           </nav>
-          <button type="button" className="app-rail-logout" tabIndex={-1} onClick={logout} title="Log out" aria-label="Log out">
-            <Icon name="logout" />
-          </button>
+          <div className="app-rail-foot">
+            <SettingsButton />
+            <button type="button" className="app-rail-logout" tabIndex={-1} onClick={logout} title="Log out" aria-label="Log out">
+              <Icon name="logout" />
+            </button>
+          </div>
         </aside>
 
         <div className="app-main">
@@ -74,7 +77,6 @@ export default function AppShell() {
               <input id="app-search" type="search" placeholder="Search..." aria-label="Search" />
             </label>
             <div className="app-userbox">
-              <ThemeToggle embedded tabIndex={-1} />
               <div className="app-user-meta">
                 <div className="app-user-name">{user?.name}</div>
                 <div className="app-user-role">{user?.roleLabel || user?.role}</div>

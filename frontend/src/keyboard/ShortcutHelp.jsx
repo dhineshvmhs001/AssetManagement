@@ -1,9 +1,8 @@
 import './ShortcutHelp.css';
 
 const ROWS = [
-  ['Tab / Shift+Tab', 'Switch sidebar modules (not while typing in a field)'],
-  ['↑ / ↓', 'Move in the current page (asset list rows)'],
-  ['← / →', 'Switch tabs on the current page (Asset list / Add / Import)'],
+  ['Tab / Shift+Tab', 'Switch sidebar modules'],
+  ['↑ / ↓ / ← / →', 'Next or previous form field (on forms). List rows and Inventory tabs otherwise'],
   ['Enter', 'Open the selected asset row'],
   ['/', 'Focus search'],
   ['g then d', 'Dashboard'],

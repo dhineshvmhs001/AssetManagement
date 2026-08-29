@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { listVendors } from '../../api/vendors.api';
+import { Field, FilterRow, Input, Select } from '../../ui';
 
 const EMPTY = { search: '', status: '' };
 const PAGE_SIZE = 20;
@@ -46,28 +47,28 @@ export default function VendorList() {
   return (
     <section>
       <div className="inv-head">
-        <div>
-          <h2>Vendor list</h2>
-          <p>Add the supplier first. Incoming stock on Add Asset picks from this list.</p>
-        </div>
+        <p>Add the supplier first. Incoming stock on Add Asset picks from this list.</p>
         <Link className="btn primary" to="/vendors/add" tabIndex={-1}>
           Add vendor
         </Link>
       </div>
 
-      <div className="inv-toolbar">
-        <input
-          className="inv-search"
-          placeholder="Search vendor ID, name, contact, email…"
-          value={filters.search}
-          onChange={(e) => set('search', e.target.value)}
-        />
-        <select value={filters.status} onChange={(e) => set('status', e.target.value)}>
-          <option value="">All statuses</option>
-          <option value="ACTIVE">Active</option>
-          <option value="INACTIVE">Inactive</option>
-        </select>
-      </div>
+      <FilterRow>
+        <Field label="Search" style={{ flex: '1 1 240px' }}>
+          <Input
+            placeholder="Search vendor ID, name, contact, email…"
+            value={filters.search}
+            onChange={(e) => set('search', e.target.value)}
+          />
+        </Field>
+        <Field label="Status" style={{ flex: '0 1 180px' }}>
+          <Select value={filters.status} onChange={(e) => set('status', e.target.value)} aria-label="Filter by status">
+            <option value="">All statuses</option>
+            <option value="ACTIVE">Active</option>
+            <option value="INACTIVE">Inactive</option>
+          </Select>
+        </Field>
+      </FilterRow>
 
       <div className="inv-table-wrap">
         <table className="inv-table">

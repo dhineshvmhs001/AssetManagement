@@ -66,10 +66,7 @@ export default function BulkImport() {
   return (
     <section>
       <div className="inv-head">
-        <div>
-          <h2>Bulk import</h2>
-          <p>CSV template, validation, duplicate serial check. Valid rows only are imported.</p>
-        </div>
+        <p>CSV template, validation, duplicate serial check. Valid rows only are imported.</p>
         <button type="button" className="btn ghost" onClick={downloadTemplate}>
           Download template
         </button>

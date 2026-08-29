@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { listEmployees } from '../../api/employees.api';
+import { Field, FilterRow, Input, Select } from '../../ui';
 
 const EMPTY = { search: '', status: '', assetsHeld: '' };
 const PAGE_SIZE = 20;
@@ -46,10 +47,7 @@ export default function EmployeeList() {
   return (
     <section>
       <div className="inv-head">
-        <div>
-          <h2>Employee list</h2>
-          <p>Add the person first. HR tickets and assignment pick from this list.</p>
-        </div>
+        <p>Add the person first. HR tickets and assignment pick from this list.</p>
         <div className="inv-actions">
           <Link className="btn ghost" to="/employees/import" tabIndex={-1}>
             Bulk import
@@ -60,24 +58,29 @@ export default function EmployeeList() {
         </div>
       </div>
 
-      <div className="inv-toolbar">
-        <input
-          className="inv-search"
-          placeholder="Search employee ID, name, email…"
-          value={filters.search}
-          onChange={(e) => set('search', e.target.value)}
-        />
-        <select value={filters.status} onChange={(e) => set('status', e.target.value)}>
-          <option value="">All statuses</option>
-          <option value="ACTIVE">Active</option>
-          <option value="INACTIVE">Inactive</option>
-        </select>
-        <select value={filters.assetsHeld} onChange={(e) => set('assetsHeld', e.target.value)}>
-          <option value="">All holdings</option>
-          <option value="with">With assets</option>
-          <option value="without">Without assets</option>
-        </select>
-      </div>
+      <FilterRow>
+        <Field label="Search" style={{ flex: '1 1 240px' }}>
+          <Input
+            placeholder="Search employee ID, name, email…"
+            value={filters.search}
+            onChange={(e) => set('search', e.target.value)}
+          />
+        </Field>
+        <Field label="Status" style={{ flex: '0 1 180px' }}>
+          <Select value={filters.status} onChange={(e) => set('status', e.target.value)} aria-label="Filter by status">
+            <option value="">All statuses</option>
+            <option value="ACTIVE">Active</option>
+            <option value="INACTIVE">Inactive</option>
+          </Select>
+        </Field>
+        <Field label="Holdings" style={{ flex: '0 1 180px' }}>
+          <Select value={filters.assetsHeld} onChange={(e) => set('assetsHeld', e.target.value)} aria-label="Filter by holdings">
+            <option value="">All holdings</option>
+            <option value="with">With assets</option>
+            <option value="without">Without assets</option>
+          </Select>
+        </Field>
+      </FilterRow>
 
       <div className="inv-table-wrap">
         <table className="inv-table">

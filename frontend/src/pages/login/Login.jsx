@@ -3,6 +3,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthProvider';
 import { homePath } from '../../auth/access';
 import { notify } from '../../ui/notify';
+import { forceLoading } from '../../ui/loading';
 import './Login.css';
 
 export default function Login() {
@@ -20,14 +21,19 @@ export default function Login() {
   async function handleSubmit(e) {
     e.preventDefault();
     setBusy(true);
-    const data = await login(email, password, remember);
-    setBusy(false);
-    if (!data.ok) {
-      notify.error(data.error || 'Invalid email or password');
-      return;
+    forceLoading(true);
+    try {
+      const data = await login(email, password, remember);
+      if (!data.ok) {
+        notify.error(data.error || 'Invalid email or password');
+        return;
+      }
+      notify.success('Signed in');
+      navigate(homePath(data.user.role), { replace: true });
+    } finally {
+      forceLoading(false);
+      setBusy(false);
     }
-    notify.success('Signed in');
-    navigate(homePath(data.user.role), { replace: true });
   }
 
   return (

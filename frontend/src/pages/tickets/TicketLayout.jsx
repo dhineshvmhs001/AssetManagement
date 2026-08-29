@@ -9,7 +9,8 @@ const LINKS = [
 
 export default function TicketLayout() {
   const { user } = useAuth();
-  const links = user?.role === 'MANAGER' ? LINKS.filter((link) => link.to !== '/tickets/add') : LINKS;
+  const canCreate = ['ADMIN', 'HR'].includes(user?.role);
+  const links = canCreate ? LINKS : LINKS.filter((link) => link.to !== '/tickets/add');
 
   return (
     <div className="inv">

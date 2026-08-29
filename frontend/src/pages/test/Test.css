@@ -1,75 +1,71 @@
 .test-page {
   min-height: 100svh;
   display: grid;
-  place-content: center;
+  align-content: start;
   justify-items: center;
-  gap: 14px;
-  padding: 24px 16px;
+  gap: 28px;
+  padding: 48px 20px 64px;
+  background: var(--login-bg, #070707);
+  color: var(--ink, #e8e8e8);
+}
+
+.test-head {
   text-align: center;
-  background: #000;
-  color: #9ca3af;
 }
 
-.test-hub {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  margin: 0 0 12px;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: clamp(2.6rem, 8vw, 4.6rem);
-  font-weight: 900;
-  letter-spacing: -0.02em;
-  line-height: 1;
-  animation: test-hub-pulse 1.4s ease-in-out infinite;
+.test-head h1 {
+  margin: 0 0 6px;
+  font-size: 1.4rem;
 }
 
-.test-hub-start {
-  color: #fff;
+.test-head p {
+  margin: 0;
+  color: var(--muted, #9ca3af);
 }
 
-.test-hub-end {
-  display: inline-block;
-  padding: 0.08em 0.18em 0.12em;
-  border-radius: 8px;
-  background: #ffa31a;
-  color: #000;
+.test-grid {
+  width: min(1080px, 100%);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
 }
 
-@keyframes test-hub-pulse {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(0.985);
-    opacity: 0.82;
-  }
+.test-card {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 28px 16px 18px;
+  border-radius: 16px;
+  background: var(--card-bg, #161616);
+  border: 1px solid var(--card-line, rgba(255, 255, 255, 0.06));
+  box-shadow: var(--card-shadow, none);
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .test-hub {
-    animation: none;
-  }
+.test-num {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--muted, #9ca3af);
 }
 
-.test-status {
-  font-weight: 700;
-  font-size: 1.1rem;
+.test-card h2 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 650;
 }
 
-.test-status.ok {
-  color: #4ade80;
-}
-
-.test-status.fail {
-  color: #f87171;
-}
-
-.test-error {
-  color: #9ca3af;
-  max-width: 40rem;
+.test-stage {
+  height: 172px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
 }
 
 .mail-test-form {
@@ -106,3 +102,43 @@
   opacity: 0.6;
   cursor: wait;
 }
+
+.test-status {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.test-status.ok {
+  color: #4ade80;
+}
+
+.test-status.fail {
+  color: #f87171;
+}
+
+/* ---------- card polish ---------- */
+
+.test-card {
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.test-card:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--accent, #d946ef) 35%, transparent);
+}
+
+.test-card.is-on {
+  border-color: var(--accent, #d946ef);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent, #d946ef) 45%, transparent);
+}
+
+.test-stage {
+  width: 100%;
+  border-radius: 14px;
+  background: radial-gradient(
+    circle at 50% 45%,
+    color-mix(in srgb, var(--accent, #d946ef) 9%, transparent),
+    transparent 68%
+  );
+}
+

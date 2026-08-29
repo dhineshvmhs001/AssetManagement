@@ -116,13 +116,10 @@ export default function BulkImportEmployees() {
   return (
     <section>
       <div className="inv-head">
-        <div>
-          <h2>Bulk import</h2>
-          <p>
-            Download the Excel template, fill every column, then upload. Column names and order must
-            match. Duplicate employee id rows are skipped.
-          </p>
-        </div>
+        <p>
+          Download the Excel template, fill every column, then upload. Column names and order must
+          match. Duplicate employee id rows are skipped.
+        </p>
         <button type="button" className="btn ghost" onClick={downloadTemplate}>
           Download template
         </button>

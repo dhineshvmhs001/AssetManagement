@@ -37,7 +37,6 @@ export default function Dashboard() {
   return (
     <section className="dash">
       <div className="dash-head">
-        <h2>Dashboard</h2>
         <p>Inventory at a glance. Open a tile to see those assets.</p>
       </div>
 

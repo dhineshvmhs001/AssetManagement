@@ -2,8 +2,8 @@ import { createContext, useContext, useEffect, useMemo, useRef, useState } from 
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthProvider';
 import { canAccessPath } from '../auth/access';
-import { isTypingTarget, cycleRail } from './keys';
-import { allowNav, pageHasForm } from './navGuard';
+import { isTypingTarget, cycleRail, isArrowKey, formArrowDirection, cycleFormField } from './keys';
+import { allowNav } from './navGuard';
 import ShortcutHelp from './ShortcutHelp';
 
 const KeyboardContext = createContext(null);
@@ -57,22 +57,28 @@ export function KeyboardProvider({ children }) {
         return;
       }
 
-      if (isTypingTarget(e.target) && e.key !== 'Escape') {
-        return;
-      }
-
       if (e.key === 'Tab') {
-        // On a form page, Tab must reach the form's own controls. Only take
-        // it over for the sidebar rail on pages that have no form.
-        if (helpOpen || pageHasForm()) {
+        if (helpOpen) {
           return;
         }
         e.preventDefault();
-        cycleRail(e.shiftKey ? -1 : 1);
+        if (allowNav()) {
+          cycleRail(e.shiftKey ? -1 : 1);
+        }
         return;
       }
 
-      if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      if (isArrowKey(e.key)) {
+        if (!helpOpen) {
+          const step = formArrowDirection(e.key, e.target);
+          if (step && cycleFormField(step)) {
+            e.preventDefault();
+          }
+        }
+        return;
+      }
+
+      if (isTypingTarget(e.target)) {
         return;
       }
 

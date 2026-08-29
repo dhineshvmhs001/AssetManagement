@@ -17,8 +17,21 @@ html {
   color-scheme: light;
 }
 
-html[data-theme='dark'] {
-  color-scheme: dark;
+html[data-density='compact'] {
+  --font-size: 16px;
+}
+
+html[data-density='compact'] .app-topbar {
+  min-height: 56px;
+}
+
+html[data-density='compact'] .inv-card,
+html[data-density='compact'] .inv-table-wrap {
+  border-radius: 16px;
+}
+
+html[data-density='compact'] .inv-card {
+  padding: 12px 14px;
 }
 
 body {

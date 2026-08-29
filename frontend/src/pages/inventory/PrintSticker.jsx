@@ -21,7 +21,7 @@ export default function PrintSticker() {
     return <p className="inv-error">{error}</p>;
   }
   if (!data) {
-    return <p className="inv-muted">Loading…</p>;
+    return <div className="page-wait" aria-busy="true" />;
   }
 
   const asset = data.asset;

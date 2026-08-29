@@ -126,7 +126,7 @@
   padding: 18px 20px;
 }
 
-.inv-card + .inv-card {
+.inv-card+.inv-card {
   margin-top: 14px;
 }
 
@@ -325,6 +325,10 @@
   align-items: start;
 }
 
+.inv-form > .ds-field {
+  min-width: 0;
+}
+
 .inv-form label {
   display: block;
   font-size: 0.8125rem;
@@ -424,7 +428,8 @@
 }
 
 .assign-pick-tools input[type='text'],
-.assign-pick-tools input:not([type='checkbox']) {
+.assign-pick-tools input:not([type='checkbox']),
+.assign-pick-tools .ds-input {
   flex: 1;
   min-width: 180px;
 }
@@ -697,15 +702,18 @@
 }
 
 @media print {
+
   .app-frame,
   .app-shell,
   .app-main,
   .app-content,
   .inv {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
     background: #fff;
     box-shadow: none;
     padding: 0;
-    min-height: 0;
   }
 
   .app-rail,
@@ -718,6 +726,7 @@
 }
 
 @media (max-width: 800px) {
+
   .inv-form,
   .inv-two,
   .inv-meta,

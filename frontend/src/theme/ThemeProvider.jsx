@@ -1,64 +1,85 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { applySkin, readSkin } from './skin';
+import {
+  applySkin,
+  persistPref,
+  readSkin,
+  readStored,
+  resolveTheme,
+} from './skin';
+import { normalizeSkin } from './skins';
+import { DEFAULT_LOADER, LOADER_KINDS, normalizeLoader } from '../ui/loaders';
 
-const STORAGE_KEY = 'asset-theme';
-const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 const ThemeContext = createContext(null);
 
-function readCookie() {
-  const match = document.cookie.match(/(?:^|; )asset-theme=(light|dark)/);
-  return match ? match[1] : null;
+function getInitialColorMode() {
+  return readStored('asset-theme', ['light', 'dark', 'system'], 'light');
 }
 
-function writeCookie(theme) {
-  document.cookie = `${STORAGE_KEY}=${theme}; path=/; max-age=${COOKIE_MAX_AGE}; SameSite=Lax`;
+function getInitialDensity() {
+  return readStored('asset-density', ['comfortable', 'compact'], 'comfortable');
 }
 
-function getInitialTheme() {
-  try {
-    const fromCookie = readCookie();
-    if (fromCookie === 'dark' || fromCookie === 'light') {
-      return fromCookie;
-    }
-    const fromStorage = localStorage.getItem(STORAGE_KEY);
-    if (fromStorage === 'dark' || fromStorage === 'light') {
-      return fromStorage;
-    }
-  } catch {
-    /* ignore */
-  }
-  return 'light';
-}
-
-function persistTheme(theme) {
-  try {
-    writeCookie(theme);
-    localStorage.setItem(STORAGE_KEY, theme);
-  } catch {
-    /* ignore */
-  }
+function getInitialLoader() {
+  return readStored('asset-loader', LOADER_KINDS, DEFAULT_LOADER);
 }
 
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(getInitialTheme);
+  const [colorMode, setColorModeState] = useState(getInitialColorMode);
+  const [skin, setSkinState] = useState(readSkin);
+  const [density, setDensityState] = useState(getInitialDensity);
+  const [loader, setLoaderState] = useState(getInitialLoader);
+  const [theme, setTheme] = useState(() => resolveTheme(getInitialColorMode()));
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    persistTheme(theme);
-  }, [theme]);
+    const next = resolveTheme(colorMode);
+    setTheme(next);
+    document.documentElement.setAttribute('data-theme', next);
+    persistPref('asset-theme', colorMode);
+  }, [colorMode]);
 
   useEffect(() => {
-    applySkin(readSkin());
-  }, []);
+    if (colorMode !== 'system') {
+      return undefined;
+    }
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    const onChange = () => {
+      const next = resolveTheme('system');
+      setTheme(next);
+      document.documentElement.setAttribute('data-theme', next);
+    };
+    media.addEventListener('change', onChange);
+    return () => media.removeEventListener('change', onChange);
+  }, [colorMode]);
+
+  useEffect(() => {
+    applySkin(skin);
+    persistPref('asset-skin', skin);
+  }, [skin]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-density', density);
+    persistPref('asset-density', density);
+  }, [density]);
+
+  useEffect(() => {
+    persistPref('asset-loader', loader);
+  }, [loader]);
 
   const value = useMemo(
     () => ({
+      colorMode,
       theme,
       isDark: theme === 'dark',
-      toggleTheme: () => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark')),
-      setTheme,
+      setColorMode: setColorModeState,
+      toggleTheme: () => setColorModeState((prev) => (prev === 'dark' ? 'light' : 'dark')),
+      skin,
+      setSkin: (next) => setSkinState(normalizeSkin(next)),
+      density,
+      setDensity: setDensityState,
+      loader,
+      setLoader: (next) => setLoaderState(normalizeLoader(next)),
     }),
-    [theme],
+    [colorMode, theme, skin, density, loader],
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

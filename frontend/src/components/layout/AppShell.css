@@ -1,12 +1,13 @@
 .app-frame {
-  min-height: 100svh;
+  height: 100svh;
   padding: 18px;
   background: var(--frame-bg);
 }
 
 .app-shell {
   display: flex;
-  min-height: calc(100svh - 36px);
+  height: 100%;
+  min-height: 0;
   border-radius: 28px;
   background: var(--shell-bg);
   box-shadow: var(--shell-shadow);
@@ -44,6 +45,15 @@
   align-items: center;
   gap: 8px;
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 4px 0;
+  scrollbar-width: none;
+}
+
+.app-nav::-webkit-scrollbar {
+  display: none;
 }
 
 .app-nav a,
@@ -74,15 +84,19 @@
   color: var(--ink);
 }
 
-[data-skin]:not([data-skin='default']) .app-nav a.active {
+.app-nav a.active {
   background: var(--accent);
   color: var(--accent-ink);
 }
 
 .app-nav a:focus-visible,
 .app-rail-logout:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+.app-nav a.active:focus-visible {
+  box-shadow: none;
 }
 
 .app-nav-soon {
@@ -90,14 +104,22 @@
   cursor: default;
 }
 
+.app-rail-foot {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
 .app-rail-logout {
   cursor: pointer;
-  margin-top: auto;
 }
 
 .app-main {
   flex: 1;
   min-width: 0;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   padding: 8px 22px 22px 8px;
@@ -178,6 +200,8 @@
 
 .app-content {
   flex: 1;
+  min-height: 0;
+  overflow: auto;
   padding: 4px 10px 8px 18px;
 }
 
@@ -187,7 +211,6 @@
   }
 
   .app-shell {
-    min-height: calc(100svh - 20px);
     border-radius: 20px;
     flex-direction: column;
   }
@@ -210,6 +233,11 @@
 
   .app-rail-logout {
     margin: 0;
+  }
+
+  .app-rail-foot {
+    margin: 0;
+    flex-direction: row;
   }
 
   .app-main {

@@ -1,9 +1,9 @@
 import './NamePage.css';
 
-export default function NamePage({ title }) {
+export default function NamePage() {
   return (
     <section className="name-page">
-      <h2>{title}</h2>
+      <p>Nothing here yet.</p>
     </section>
   );
 }

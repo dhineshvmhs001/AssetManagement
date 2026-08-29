@@ -1,11 +1,24 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { getTicket, getTicketFileUrl, decideTicket } from '../../api/tickets.api';
+import { getTicket, getTicketFileUrl, decideTicket, dispatchTicket } from '../../api/tickets.api';
 import { useAuth } from '../../auth/AuthProvider';
 import { notify } from '../../ui/notify';
 
-const ASSIGN_ROLES = ['ADMIN', 'ASSET_MANAGER', 'ASSET_TEAM'];
-const ASSIGNABLE = ['WITH_ASSET_MANAGER', 'WITH_ASSET_TEAM'];
+function introFor(role) {
+  if (role === 'MANAGER') {
+    return 'Request for someone on your team. Approve or reject here; the same action is in the email.';
+  }
+  if (role === 'ASSET_MANAGER') {
+    return 'After the manager approves, send the query to Asset Team. They assign the physical asset to the employee.';
+  }
+  if (role === 'ASSET_TEAM') {
+    return 'When Asset Manager sends a ticket to the team, assign matching stock on Assignment.';
+  }
+  if (role === 'ADMIN') {
+    return 'Manager approves, Asset Manager (or you) sends it to Asset Team, then stock is assigned on Assignment.';
+  }
+  return 'HR request. Manager approves, Asset Manager sends it to Asset Team, then the team assigns stock.';
+}
 
 export default function TicketDetails() {
   const { code } = useParams();
@@ -69,11 +82,23 @@ export default function TicketDetails() {
     );
   }
 
+  async function sendToTeam() {
+    setBusy(true);
+    const data = await dispatchTicket(ticket.ticketCode);
+    setBusy(false);
+    if (!data.ok) {
+      notify.error(data.error || 'Could not send ticket to Asset Team');
+      return;
+    }
+    setTicket(data.ticket);
+    notify.success(`${ticket.ticketCode} sent to Asset Team`);
+  }
+
   if (error) {
     return <p className="inv-error">{error}</p>;
   }
   if (!ticket) {
-    return <p className="inv-muted">Loading…</p>;
+    return <div className="page-wait" aria-busy="true" />;
   }
 
   return (
@@ -83,11 +108,7 @@ export default function TicketDetails() {
           <h2>
             {ticket.ticketCode} · {ticket.employeeName || 'Ticket'}
           </h2>
-          <p>
-            {user?.role === 'MANAGER'
-              ? 'Request for someone on your team. Approve or reject here; the same action is in the email.'
-              : 'HR request. After the manager approves, Asset Team assigns real stock on Assignment.'}
-          </p>
+          <p>{introFor(user?.role)}</p>
         </div>
         <div className="inv-head-actions">
           {ticket.canDecide ? (
@@ -100,7 +121,12 @@ export default function TicketDetails() {
               </button>
             </>
           ) : null}
-          {ASSIGN_ROLES.includes(user?.role) && ASSIGNABLE.includes(ticket.status) ? (
+          {ticket.canDispatch ? (
+            <button type="button" className="btn primary" disabled={busy} onClick={sendToTeam}>
+              Send to Asset Team
+            </button>
+          ) : null}
+          {ticket.canAssignStock ? (
             <Link className="btn primary" to={`/assignment?ticket=${encodeURIComponent(ticket.ticketCode)}`}>
               Assign assets
             </Link>

@@ -1,10 +1,11 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import ThemeToggle from './components/common/ThemeToggle';
+import SettingsButton from './components/common/Settings';
 import AppShell from './components/layout/AppShell';
 import { AuthProvider } from './auth/AuthProvider';
 import { KeyboardProvider } from './keyboard/KeyboardProvider';
 import RequireAuth from './auth/RequireAuth';
 import RequireAccess, { RoleHomeRedirect } from './auth/RequireAccess';
+import PageLoader from './ui/PageLoader';
 import Login from './pages/login/Login';
 import Dashboard from './pages/dashboard/Dashboard';
 import InventoryLayout from './pages/inventory/InventoryLayout';
@@ -34,39 +35,38 @@ import TicketDetails from './pages/tickets/TicketDetails';
 import Activity from './pages/activity/Activity';
 import Reports from './pages/reports/Reports';
 import MyAssets from './pages/my-assets/MyAssets';
-// import Test from './pages/test/Test';
+import Test from './pages/test/Test';
 import MailTest from './pages/mail/MailTest';
 
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <PageLoader />
         <Routes>
           <Route
             path="/login"
             element={
               <>
-                <ThemeToggle />
+                <SettingsButton variant="float" />
                 <Login />
               </>
             }
           />
-          {/*
           <Route
             path="/test"
             element={
               <>
-                <ThemeToggle />
+                <SettingsButton variant="float" />
                 <Test />
               </>
             }
           />
-          */}
           <Route
             path="/mail"
             element={
               <>
-                <ThemeToggle />
+                <SettingsButton variant="float" />
                 <MailTest />
               </>
             }

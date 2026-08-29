@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { setNavGuard, clearNavGuard } from '../../keyboard/navGuard';
 import { getEmployeeOptions } from '../../api/employees.api';
 import FilePicker from '../inventory/FilePicker';
+import { Field, Input, Select } from '../../ui';
 
 export const EMPTY_EMPLOYEE = {
   employeeCode: '',
@@ -79,10 +80,6 @@ export default function EmployeeForm({
     return (options.requiredFields || []).includes(key);
   }
 
-  function star(key) {
-    return need(key) ? <span className="inv-req"> *</span> : null;
-  }
-
   const managerChoices = options.managers || [];
   const departments = options.departments || FALLBACK_OPTIONS.departments;
   const idLocked = Boolean(initial?.employeeCode);
@@ -146,9 +143,8 @@ export default function EmployeeForm({
         Manager is picked from the managers list (users with the Manager role). Required when PRODUCTION_MODE is on.
       </p>
 
-      <label>
-        <span>Employee ID{idLocked ? null : <span className="inv-req"> *</span>}</span>
-        <input
+      <Field label="Employee ID" required={!idLocked}>
+        <Input
           value={form.employeeCode || ''}
           onChange={idLocked ? undefined : (e) => set('employeeCode', e.target.value)}
           onBlur={
@@ -160,44 +156,37 @@ export default function EmployeeForm({
           disabled={idLocked}
           required={!idLocked}
         />
-      </label>
-      <label>
-        <span>Name{star('name')}</span>
-        <input value={form.name} onChange={(e) => set('name', e.target.value)} required={need('name')} />
-      </label>
-      <label>
-        <span>Department{star('department')}</span>
-        <select value={form.department} onChange={(e) => set('department', e.target.value)} required={need('department')}>
+      </Field>
+      <Field label="Name" required={need('name')}>
+        <Input value={form.name} onChange={(e) => set('name', e.target.value)} required={need('name')} />
+      </Field>
+      <Field label="Department" required={need('department')}>
+        <Select value={form.department} onChange={(e) => set('department', e.target.value)} aria-label="Department">
           <option value="">Select department</option>
           {departments.map((dept) => (
             <option key={dept} value={dept}>
               {dept}
             </option>
           ))}
-        </select>
-      </label>
-      <label>
-        <span>Designation{star('designation')}</span>
-        <input value={form.designation} onChange={(e) => set('designation', e.target.value)} required={need('designation')} />
-      </label>
-      <label>
-        <span>Email{star('email')} <em className="inv-muted">(unique)</em></span>
-        <input type="email" value={form.email} onChange={(e) => set('email', e.target.value)} required={need('email')} />
-      </label>
-      <label>
-        <span>Mobile{star('mobile')} <em className="inv-muted">(unique)</em></span>
-        <input value={form.mobile} onChange={(e) => set('mobile', e.target.value)} required={need('mobile')} />
-      </label>
-      <label>
-        <span>Joining date{star('joiningDate')}</span>
-        <input type="date" value={form.joiningDate} onChange={(e) => set('joiningDate', e.target.value)} required={need('joiningDate')} />
-      </label>
-      <label>
-        <span>Manager{star('managerId')}</span>
-        <select
+        </Select>
+      </Field>
+      <Field label="Designation" required={need('designation')}>
+        <Input value={form.designation} onChange={(e) => set('designation', e.target.value)} required={need('designation')} />
+      </Field>
+      <Field label="Email" required={need('email')} hint="Must be unique">
+        <Input type="email" value={form.email} onChange={(e) => set('email', e.target.value)} required={need('email')} />
+      </Field>
+      <Field label="Mobile" required={need('mobile')} hint="Must be unique">
+        <Input value={form.mobile} onChange={(e) => set('mobile', e.target.value)} required={need('mobile')} />
+      </Field>
+      <Field label="Joining date" required={need('joiningDate')}>
+        <Input type="date" value={form.joiningDate} onChange={(e) => set('joiningDate', e.target.value)} required={need('joiningDate')} />
+      </Field>
+      <Field label="Manager" required={need('managerId')}>
+        <Select
           value={form.managerId || ''}
           onChange={(e) => set('managerId', e.target.value)}
-          required={need('managerId')}
+          aria-label="Manager"
         >
           <option value="">{managerChoices.length ? 'Select manager' : 'No managers in the list yet'}</option>
           {managerChoices.map((person) => (
@@ -205,19 +194,17 @@ export default function EmployeeForm({
               {person.name} — {person.email}
             </option>
           ))}
-        </select>
-      </label>
-      <label>
-        <span>Location{star('location')}</span>
-        <input value={form.location} onChange={(e) => set('location', e.target.value)} required={need('location')} />
-      </label>
-      <label>
-        <span>Status{star('status')}</span>
-        <select value={form.status} onChange={(e) => set('status', e.target.value)} required={need('status')}>
+        </Select>
+      </Field>
+      <Field label="Location" required={need('location')}>
+        <Input value={form.location} onChange={(e) => set('location', e.target.value)} required={need('location')} />
+      </Field>
+      <Field label="Status" required={need('status')}>
+        <Select value={form.status} onChange={(e) => set('status', e.target.value)} aria-label="Status">
           <option value="ACTIVE">Active</option>
           <option value="INACTIVE">Inactive</option>
-        </select>
-      </label>
+        </Select>
+      </Field>
 
       <FilePicker
         label="Documents"

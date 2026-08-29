@@ -1,6 +1,7 @@
 .ds-select {
   position: relative;
   min-width: 0;
+  width: 100%;
 }
 
 .ds-select__button {
