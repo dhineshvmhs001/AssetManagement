@@ -11,9 +11,11 @@ router.use(auth);
 router.get('/', ticketsController.list);
 router.get('/options', ticketsController.options);
 router.post('/', optionalTicketFiles, ticketsController.create);
+router.get('/:code/history', ticketsController.history);
 router.get('/:code/files/:kind/:stored', ticketsController.file);
 router.get('/:code', ticketsController.getOne);
 router.post('/:code/decision', ticketsController.decideInApp);
 router.post('/:code/dispatch', ticketsController.dispatchToTeam);
+router.post('/:code/cancel', ticketsController.cancel);
 
 module.exports = router;

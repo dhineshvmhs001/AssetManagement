@@ -1,0 +1,125 @@
+/* Shared by DatePicker and DateRangePicker so the two can never drift apart. */
+
+.ds-cal__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.ds-cal__nav strong {
+  font-size: var(--ds-fs-body);
+  font-weight: 800;
+  color: var(--ds-text-deep);
+}
+
+.ds-cal__nav button {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: var(--ds-r-pill);
+  background: var(--ds-tint-10);
+  color: var(--ds-text-deep);
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.ds-cal__nav button:hover:not(:disabled) {
+  background: var(--ds-tint-18);
+}
+
+.ds-cal__nav button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.ds-cal__week,
+.ds-cal__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.ds-cal__week span {
+  padding: 3px 0;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.ds-cal__day {
+  position: relative;
+  height: 30px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ds-cal__day span {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  margin: 0 auto;
+  border-radius: 8px;
+}
+
+.ds-cal__day:hover:not(:disabled) span {
+  background: var(--ds-tint-14);
+}
+
+.ds-cal__day.is-out,
+.ds-cal__day:disabled {
+  color: var(--muted);
+  opacity: 0.45;
+}
+
+.ds-cal__day:disabled {
+  cursor: default;
+}
+
+/* Range shading. A single picker only ever uses .is-start. */
+.ds-cal__day.is-mid,
+.ds-cal__day.is-start,
+.ds-cal__day.is-end {
+  background: var(--ds-tint-14);
+}
+
+.ds-cal__day.is-start {
+  border-radius: 8px 0 0 8px;
+}
+
+.ds-cal__day.is-end {
+  border-radius: 0 8px 8px 0;
+}
+
+.ds-cal__day.is-single,
+.ds-cal__day.is-start.is-end {
+  border-radius: 8px;
+  background: transparent;
+}
+
+.ds-cal__day.is-start span,
+.ds-cal__day.is-end span,
+.ds-cal__day.is-start:hover span,
+.ds-cal__day.is-end:hover span {
+  background: var(--ds-primary);
+  color: var(--ds-primary-ink);
+}
+
+/* Today gets a ring, not a fill — a fill reads as "selected". */
+.ds-cal__day.is-today:not(.is-start):not(.is-end) span {
+  box-shadow: inset 0 0 0 1.5px var(--ds-primary);
+}

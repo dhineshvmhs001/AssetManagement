@@ -10,7 +10,7 @@ import {
   submitPrecheck,
 } from '../../api/maintenance.api';
 import { notify } from '../../ui/notify';
-import { Field, Input, Select, Textarea } from '../../ui';
+import { DatePicker, Field, Input, Select, Textarea } from '../../ui';
 import FilePicker from '../inventory/FilePicker';
 import '../inventory/Inventory.css';
 
@@ -420,10 +420,10 @@ export default function Maintenance() {
                   </Select>
                 </Field>
                 <Field label="Warranty expiry">
-                  <Input
-                    type="date"
+                  <DatePicker
                     value={form.warrantyExpiry}
-                    onChange={(e) => set('warrantyExpiry', e.target.value)}
+                    onChange={(value) => set('warrantyExpiry', value)}
+                    aria-label="Warranty expiry"
                   />
                 </Field>
                 {claimNeeded ? (

@@ -1,6 +1,20 @@
 const crypto = require('crypto');
 const { query } = require('../config/db');
 
+const ACTION_LABELS = {
+  ASSET_CREATE: 'Create',
+  ASSET_UPDATE: 'Update',
+  ASSET_IMPORT: 'Import',
+  ASSET_EXPORT: 'Export',
+  Return: 'Unassign',
+  'Repair complete': 'Repair',
+  'Send to team': 'Update',
+};
+
+function actionLabel(action) {
+  return ACTION_LABELS[action] || action || '—';
+}
+
 async function logActivity({ user, module, action, description, entityType, entityId, ip }) {
   try {
     await query(
@@ -24,4 +38,28 @@ async function logActivity({ user, module, action, description, entityType, enti
   }
 }
 
-module.exports = { logActivity };
+async function listEntityHistory(entityType, entityId, { limit = 100 } = {}) {
+  const cap = Math.min(200, Math.max(1, Number(limit) || 100));
+  const result = await query(
+    `SELECT l.id, l.module, l.action, l.description, l.role, l.created_at,
+            u.name AS user_name, u.email AS user_email
+     FROM activity_log l
+     LEFT JOIN users u ON u.id = l.user_id
+     WHERE lower(l.entity_type) = lower($1) AND l.entity_id = $2
+     ORDER BY l.created_at DESC, l.id DESC
+     LIMIT $3`,
+    [entityType, entityId, cap],
+  );
+  return result.rows.map((row) => ({
+    id: row.id,
+    module: row.module,
+    action: row.action,
+    actionLabel: actionLabel(row.action),
+    description: row.description,
+    role: row.role,
+    by: row.user_name || row.user_email || 'System',
+    at: row.created_at,
+  }));
+}
+
+module.exports = { logActivity, listEntityHistory, actionLabel };

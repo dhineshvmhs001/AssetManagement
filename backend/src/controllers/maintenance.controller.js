@@ -470,12 +470,23 @@ async function completeRepair(req, res) {
     await logActivity({
       user: req.user,
       module: 'Maintenance',
-      action: 'Repair complete',
+      action: 'Repair',
       description: `${asset.asset_code}: ${mapped.label}`,
       entityType: 'Asset',
       entityId: asset.id,
       ip: req.ip,
     });
+    if (mapped.status === STATUS.AVAILABLE) {
+      await logActivity({
+        user: req.user,
+        module: 'Maintenance',
+        action: 'Final check',
+        description: `${asset.asset_code}: final check passed`,
+        entityType: 'Asset',
+        entityId: asset.id,
+        ip: req.ip,
+      });
+    }
 
     return res.json({ ok: true, status: mapped.status, statusLabel: statusLabel(mapped.status) });
   } catch (err) {

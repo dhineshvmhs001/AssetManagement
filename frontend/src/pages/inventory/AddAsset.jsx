@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { createAsset } from '../../api/assets.api';
 import { notify } from '../../ui/notify';
+import { PageHeader } from '../../ui';
 import AssetForm, { EMPTY_ASSET } from './AssetForm';
 
 export default function AddAsset() {
@@ -28,9 +29,7 @@ export default function AddAsset() {
 
   return (
     <section>
-      <div className="inv-head">
-        <p>Asset code is generated as Category + Brand + Sequence. Example: LP-DL-0001.</p>
-      </div>
+      <PageHeader sub="Asset code is generated as Category + Brand + Sequence. Example: LP-DL-0001." />
 
       <AssetForm
         initial={presetVendor ? { ...EMPTY_ASSET, vendor: presetVendor } : undefined}

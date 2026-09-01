@@ -6,7 +6,10 @@ const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 
-app.use(cors());
+// The export endpoints report truncation in headers; without exposing them the
+// browser hides them from fetch() on a cross-origin call and the page cannot
+// tell a complete CSV from a capped one.
+app.use(cors({ exposedHeaders: ['X-Export-Limit', 'X-Export-Truncated', 'Content-Disposition'] }));
 app.use(express.json({ limit: '8mb' }));
 app.use(express.urlencoded({ extended: false }));
 

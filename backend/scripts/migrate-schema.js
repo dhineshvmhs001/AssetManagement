@@ -303,7 +303,45 @@ async function migrate() {
   await query(`CREATE INDEX IF NOT EXISTS asset_assignments_employee_id_idx ON asset_assignments (employee_id)`);
   await query(`CREATE INDEX IF NOT EXISTS maintenance_checks_asset_id_idx ON maintenance_checks (asset_id)`);
   await query(`CREATE INDEX IF NOT EXISTS tickets_employee_id_idx ON tickets (employee_id)`);
+  await query(`ALTER TABLE asset_assignments ADD COLUMN IF NOT EXISTS acknowledged_at TIMESTAMPTZ`);
+  await query(`
+    UPDATE asset_assignments
+    SET acknowledged_at = COALESCE(assigned_at, now())
+    WHERE acknowledged_at IS NULL
+  `);
+
   await query(`CREATE INDEX IF NOT EXISTS activity_log_created_at_idx ON activity_log (created_at DESC)`);
+  await query(`CREATE INDEX IF NOT EXISTS activity_log_created_id_idx ON activity_log (created_at DESC, id DESC)`);
+  await query(`CREATE INDEX IF NOT EXISTS activity_log_user_id_idx ON activity_log (user_id)`);
+  await query(`CREATE INDEX IF NOT EXISTS activity_log_module_idx ON activity_log (module)`);
+  await query(`
+    CREATE INDEX IF NOT EXISTS activity_log_entity_idx
+    ON activity_log (lower(entity_type), entity_id, created_at DESC)
+  `);
+
+  await query(`
+    ALTER TABLE activity_log DROP CONSTRAINT IF EXISTS activity_log_user_id_fkey
+  `);
+  await query(`
+    ALTER TABLE activity_log
+      ADD CONSTRAINT activity_log_user_id_fkey
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+  `);
+
+  await query(`
+    CREATE OR REPLACE FUNCTION activity_log_no_mutate()
+    RETURNS trigger AS $$
+    BEGIN
+      RAISE EXCEPTION 'activity_log is append-only';
+    END;
+    $$ LANGUAGE plpgsql
+  `);
+  await query(`DROP TRIGGER IF EXISTS activity_log_no_update ON activity_log`);
+  await query(`
+    CREATE TRIGGER activity_log_no_update
+      BEFORE UPDATE OR DELETE ON activity_log
+      FOR EACH ROW EXECUTE PROCEDURE activity_log_no_mutate()
+  `);
 
   console.log('Schema ready: users, vendors, assets, employees, tickets, ticket_items, asset_assignments, ticket_assets, maintenance_checks, activity_log');
 }

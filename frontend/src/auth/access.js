@@ -2,7 +2,7 @@
 // assignment, and the rest stay with Admin / Asset Manager / Asset Team.
 // Manager only sees tickets for people who report to them.
 
-const HR_PATHS = ['/employees', '/tickets'];
+const HR_PATHS = ['/employees', '/tickets', '/reports'];
 const EMPLOYEE_PATHS = ['/my-assets'];
 const MANAGER_PATHS = ['/tickets'];
 

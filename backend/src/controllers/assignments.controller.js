@@ -96,6 +96,8 @@ function toPublic(row) {
     accessories: row.accessories,
     remarks: row.remarks,
     assignedBy: row.assigned_by,
+    acknowledgedAt: row.acknowledged_at || null,
+    needsAck: !row.acknowledged_at && !row.returned_at,
     returnedAt: asDate(row.returned_at),
     returnReason: row.return_reason,
     returnCondition: row.return_condition,
@@ -477,7 +479,7 @@ async function create(req, res) {
           [ticketId, asset.id],
         );
       }
-      created.push({ id, assignmentCode: code, assetCode: asset.asset_code });
+      created.push({ id, assetId: asset.id, assignmentCode: code, assetCode: asset.asset_code });
     }
 
     if (ticketId) {
@@ -489,16 +491,50 @@ async function create(req, res) {
 
     await client.query('COMMIT');
 
+    const assignAction = assignmentType === 'Replacement' ? 'Replace' : 'Assign';
+    const codes = created.map((row) => row.assetCode).join(', ');
+    const who = employee.rows[0].employee_code;
+    const ticketNote = ticket ? ` (${ticket.ticket_code})` : '';
+    for (const row of created) {
+      await logActivity({
+        user: req.user,
+        module: 'Assignment',
+        action: assignAction,
+        description: `${assignAction === 'Replace' ? 'Replaced with' : 'Assigned'} ${row.assetCode} to ${who}${ticketNote}`,
+        entityType: 'Asset',
+        entityId: row.assetId,
+        ip: req.ip,
+      });
+    }
     await logActivity({
       user: req.user,
       module: 'Assignment',
-      action: 'Assign',
-      description: `Assigned ${created.map((row) => row.assetCode).join(', ')} to ${employee.rows[0].employee_code}${ticket ? ` (${ticket.ticket_code})` : ''
-        }`,
+      action: assignAction,
+      description: `${assignAction === 'Replace' ? 'Replacement issued' : 'Assigned'} ${codes} to ${who}${ticketNote}`,
       entityType: 'Employee',
       entityId: employeeId,
       ip: req.ip,
     });
+    if (ticket) {
+      await logActivity({
+        user: req.user,
+        module: 'Tickets',
+        action: 'Allocate',
+        description: `Allocated ${codes} to ${ticket.ticket_code}`,
+        entityType: 'Ticket',
+        entityId: ticket.id,
+        ip: req.ip,
+      });
+      await logActivity({
+        user: req.user,
+        module: 'Tickets',
+        action: 'Close',
+        description: `Closed ${ticket.ticket_code} after allocation`,
+        entityType: 'Ticket',
+        entityId: ticket.id,
+        ip: req.ip,
+      });
+    }
 
     return res.status(201).json({
       ok: true,
@@ -564,13 +600,23 @@ async function returnOne(req, res) {
     );
     await client.query('COMMIT');
 
+    const action = returnAction(reason);
     await logActivity({
       user: req.user,
       module: 'Assignment',
-      action: 'Return',
-      description: `Returned ${row.asset_code} from ${row.employee_code}`,
+      action,
+      description: `${action === 'Transfer' ? 'Transferred' : action === 'Replace' ? 'Replaced' : 'Returned'} ${row.asset_code} from ${row.employee_code}`,
       entityType: 'Asset',
       entityId: row.asset_id,
+      ip: req.ip,
+    });
+    await logActivity({
+      user: req.user,
+      module: 'Assignment',
+      action,
+      description: `${action === 'Transfer' ? 'Transferred' : action === 'Replace' ? 'Replaced' : 'Returned'} ${row.asset_code} from ${row.employee_code}`,
+      entityType: 'Employee',
+      entityId: row.employee_id,
       ip: req.ip,
     });
 
@@ -585,6 +631,71 @@ async function returnOne(req, res) {
   } finally {
     client.release();
   }
+}
+
+function returnAction(reason) {
+  if (reason === 'Transfer') {
+    return 'Transfer';
+  }
+  if (reason === 'Asset Replacement') {
+    return 'Replace';
+  }
+  return 'Return';
+}
+
+async function acknowledge(req, res) {
+  const code = String(req.params.code || '').trim();
+  const row = await findByCode(code);
+  if (!row) {
+    return res.status(404).json({ ok: false, error: 'Assignment not found' });
+  }
+  if (row.returned_at) {
+    return res.status(400).json({ ok: false, error: 'This assignment is already returned' });
+  }
+  if (row.acknowledged_at) {
+    return res.status(409).json({ ok: false, error: 'Already acknowledged' });
+  }
+
+  const person = await query(`SELECT id FROM employees WHERE user_id = $1 LIMIT 1`, [req.user.id]);
+  const own = person.rows[0]?.id === row.employee_id;
+  if (!own) {
+    return res.status(403).json({ ok: false, error: 'Only the assigned employee can acknowledge this' });
+  }
+
+  const updated = await query(
+    `UPDATE asset_assignments
+     SET acknowledged_at = now()
+     WHERE id = $1 AND acknowledged_at IS NULL AND returned_at IS NULL
+     RETURNING acknowledged_at`,
+    [row.id],
+  );
+  if (!updated.rows[0]) {
+    return res.status(409).json({ ok: false, error: 'Already acknowledged' });
+  }
+
+  await logActivity({
+    user: req.user,
+    module: 'Assignment',
+    action: 'Acknowledge',
+    description: `Acknowledged ${row.asset_code}`,
+    entityType: 'Asset',
+    entityId: row.asset_id,
+    ip: req.ip,
+  });
+  await logActivity({
+    user: req.user,
+    module: 'Assignment',
+    action: 'Acknowledge',
+    description: `${row.employee_code} acknowledged ${row.asset_code}`,
+    entityType: 'Employee',
+    entityId: row.employee_id,
+    ip: req.ip,
+  });
+
+  return res.json({
+    ok: true,
+    assignment: toPublic({ ...row, acknowledged_at: updated.rows[0].acknowledged_at }),
+  });
 }
 
 async function findByCode(code) {
@@ -633,6 +744,7 @@ module.exports = {
   mine,
   create,
   returnOne,
+  acknowledge,
   file,
   holdingsForEmployee,
   assetsForTicket,

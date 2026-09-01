@@ -43,6 +43,14 @@ export function getTicket(code) {
   return get(`/tickets/${encodeURIComponent(code)}`);
 }
 
+export function getTicketHistory(code) {
+  return get(`/tickets/${encodeURIComponent(code)}/history`);
+}
+
+export function cancelTicket(code) {
+  return post(`/tickets/${encodeURIComponent(code)}/cancel`);
+}
+
 export function createTicket(fields, files = {}) {
   return sendWithFiles(
     fields,

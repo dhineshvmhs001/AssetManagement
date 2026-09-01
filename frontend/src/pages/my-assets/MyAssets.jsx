@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { getAssignmentFileUrl, listMyAssignments } from '../../api/assignments.api';
+import { getAssignmentFileUrl, listMyAssignments, acknowledgeAssignment } from '../../api/assignments.api';
 import { useAuth } from '../../auth/AuthProvider';
+import { notify } from '../../ui/notify';
 import '../inventory/Inventory.css';
 
 export default function MyAssets() {
@@ -8,15 +9,32 @@ export default function MyAssets() {
   const [assignments, setAssignments] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [fileUrls, setFileUrls] = useState({});
+  const [acking, setAcking] = useState(null);
 
-  useEffect(() => {
+  function loadMine() {
     listMyAssignments().then((res) => {
       if (res.ok) {
         setAssignments(res.assignments || []);
       }
       setLoaded(true);
     });
+  }
+
+  useEffect(() => {
+    loadMine();
   }, []);
+
+  async function ack(row) {
+    setAcking(row.assignmentCode);
+    const data = await acknowledgeAssignment(row.assignmentCode);
+    setAcking(null);
+    if (!data.ok) {
+      notify.error(data.error || 'Could not acknowledge this asset');
+      return;
+    }
+    notify.success(`${row.assetCode} acknowledged`);
+    loadMine();
+  }
 
   useEffect(() => {
     const paths = assignments.flatMap((row) => (row.documents || []).map((file) => file.path).filter(Boolean));
@@ -64,6 +82,7 @@ export default function MyAssets() {
                 <th>Assigned</th>
                 <th>Return by</th>
                 <th>Proof</th>
+                <th>Receipt</th>
               </tr>
             </thead>
             <tbody>
@@ -94,6 +113,20 @@ export default function MyAssets() {
                       </ul>
                     ) : (
                       '—'
+                    )}
+                  </td>
+                  <td>
+                    {row.needsAck ? (
+                      <button
+                        type="button"
+                        className="btn primary"
+                        disabled={acking === row.assignmentCode}
+                        onClick={() => ack(row)}
+                      >
+                        {acking === row.assignmentCode ? 'Saving…' : 'Acknowledge'}
+                      </button>
+                    ) : (
+                      'Acknowledged'
                     )}
                   </td>
                 </tr>

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { setNavGuard, clearNavGuard } from '../../keyboard/navGuard';
 import { getEmployeeOptions } from '../../api/employees.api';
 import FilePicker from '../inventory/FilePicker';
-import { Field, Input, Select } from '../../ui';
+import { DatePicker, Field, Input, istDay, Select } from '../../ui';
 
 export const EMPTY_EMPLOYEE = {
   employeeCode: '',
@@ -180,7 +180,13 @@ export default function EmployeeForm({
         <Input value={form.mobile} onChange={(e) => set('mobile', e.target.value)} required={need('mobile')} />
       </Field>
       <Field label="Joining date" required={need('joiningDate')}>
-        <Input type="date" value={form.joiningDate} onChange={(e) => set('joiningDate', e.target.value)} required={need('joiningDate')} />
+        <DatePicker
+          value={form.joiningDate}
+          onChange={(value) => set('joiningDate', value)}
+          max={istDay()}
+          required={need('joiningDate')}
+          aria-label="Joining date"
+        />
       </Field>
       <Field label="Manager" required={need('managerId')}>
         <Select

@@ -12,6 +12,11 @@ export default function PageHeader({ title, sub, right }) {
   );
 }
 
+/** Section heading under the page title (Profile, History, Identity). */
+export function SectionTitle({ children, as: Tag = 'h3' }) {
+  return <Tag className="ds-section-title">{children}</Tag>;
+}
+
 /** A wrapping row of filters. Clear appears only when something is filtered. */
 export function FilterRow({ children }) {
   return <div className="ds-filters">{children}</div>;

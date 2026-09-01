@@ -8,6 +8,8 @@ const employeesRoutes = require('./employees.routes');
 const ticketsRoutes = require('./tickets.routes');
 const assignmentsRoutes = require('./assignments.routes');
 const maintenanceRoutes = require('./maintenance.routes');
+const activityRoutes = require('./activity.routes');
+const reportsRoutes = require('./reports.routes');
 
 const router = express.Router();
 
@@ -20,5 +22,7 @@ router.use('/employees', employeesRoutes);
 router.use('/tickets', ticketsRoutes);
 router.use('/assignments', assignmentsRoutes);
 router.use('/maintenance', maintenanceRoutes);
+router.use('/activity', activityRoutes);
+router.use('/reports', reportsRoutes);
 
 module.exports = router;

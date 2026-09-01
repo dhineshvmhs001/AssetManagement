@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const path = require('path');
 const jwt = require('jsonwebtoken');
 const { query } = require('../config/db');
-const { logActivity } = require('../lib/activity');
+const { logActivity, listEntityHistory } = require('../lib/activity');
 const { sendMail, mailConfigured } = require('../lib/mail');
 const { JWT_SECRET, APP_URL } = require('../config/env');
 const {
@@ -31,6 +31,7 @@ const STATUSES = {
   WITH_ASSET_TEAM: 'Assigned to Asset Team',
   CLOSED: 'Closed',
   REJECTED: 'Not approved',
+  CANCELLED: 'Cancelled',
 };
 
 function canWrite(user) {
@@ -208,6 +209,17 @@ function canAssignStock(user, row) {
   );
 }
 
+const OPEN_TICKETS = ['AWAITING_MANAGER', 'WITH_ASSET_MANAGER', 'WITH_ASSET_TEAM'];
+
+function canCancel(user, row) {
+  return Boolean(
+    user &&
+    row &&
+    OPEN_TICKETS.includes(row.status) &&
+    [ROLES.ADMIN, ROLES.HR, ROLES.ASSET_MANAGER].includes(user.role),
+  );
+}
+
 function toPublic(row, user) {
   if (!row) {
     return null;
@@ -238,6 +250,7 @@ function toPublic(row, user) {
     canDecide: canDecide(user, row),
     canDispatch: canDispatch(user, row),
     canAssignStock: canAssignStock(user, row),
+    canCancel: canCancel(user, row),
     ...publicTicketFiles(row.id, row.attachments),
     createdBy: row.created_by,
     createdAt: row.created_at,
@@ -787,4 +800,62 @@ async function dispatchToTeam(req, res) {
   return res.json({ ok: true, ticket: { ...toPublic(fresh, req.user), allocatedAssets } });
 }
 
-module.exports = { list, create, getOne, file, options, decideForm, decideSubmit, decideInApp, dispatchToTeam };
+async function cancel(req, res) {
+  const row = await findByCode(String(req.params.code || '').trim());
+  if (!row) {
+    return res.status(404).json({ ok: false, error: 'Ticket not found' });
+  }
+  if (!canCancel(req.user, row)) {
+    return res.status(403).json({ ok: false, error: 'This ticket cannot be cancelled' });
+  }
+  const updated = await query(
+    `UPDATE tickets SET status = 'CANCELLED', closed_at = now()
+     WHERE id = $1 AND status = ANY($2::text[])
+     RETURNING *`,
+    [row.id, OPEN_TICKETS],
+  );
+  if (!updated.rows[0]) {
+    return res.status(409).json({ ok: false, error: 'This ticket was already closed' });
+  }
+  await logActivity({
+    user: req.user,
+    module: 'Tickets',
+    action: 'Cancel',
+    description: `Cancelled ticket ${row.ticket_code}`,
+    entityType: 'Ticket',
+    entityId: row.id,
+    ip: req.ip,
+  });
+  const fresh = await findByCode(row.ticket_code);
+  const allocatedAssets = await assetsForTicket(fresh.id);
+  return res.json({ ok: true, ticket: { ...toPublic(fresh, req.user), allocatedAssets } });
+}
+
+async function history(req, res) {
+  if (!canRead(req.user)) {
+    return res.status(403).json({ ok: false, error: 'Not allowed for this role' });
+  }
+  const row = await findByCode(String(req.params.code || '').trim());
+  if (!row) {
+    return res.status(404).json({ ok: false, error: 'Ticket not found' });
+  }
+  if (req.user.role === ROLES.MANAGER && row.manager_id !== req.user.id) {
+    return res.status(404).json({ ok: false, error: 'Ticket not found' });
+  }
+  const entries = await listEntityHistory('ticket', row.id);
+  return res.json({ ok: true, ticketCode: row.ticket_code, history: entries });
+}
+
+module.exports = {
+  list,
+  create,
+  getOne,
+  file,
+  options,
+  decideForm,
+  decideSubmit,
+  decideInApp,
+  dispatchToTeam,
+  cancel,
+  history,
+};

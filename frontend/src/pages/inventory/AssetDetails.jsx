@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getAsset, getAssetFileUrl, getAssetHistory } from '../../api/assets.api';
+import ActivityHistory from '../../components/common/ActivityHistory';
+import { formatDateTime } from '../../ui';
 
 export default function AssetDetails() {
   const { code } = useParams();
@@ -174,7 +176,7 @@ export default function AssetDetails() {
           <div>
             <dt>Created</dt>
             <dd>
-              {asset.createdBy || '—'} · {asset.createdAt ? new Date(asset.createdAt).toLocaleString() : '—'}
+              {asset.createdBy || '—'} · {formatDateTime(asset.createdAt)}
             </dd>
           </div>
         </dl>
@@ -182,25 +184,7 @@ export default function AssetDetails() {
 
       <div className="inv-card" style={{ marginTop: 14 }}>
         <h3>History</h3>
-        {history.length ? (
-          <ul className="inv-history">
-            {history.map((entry) => (
-              <li key={entry.id}>
-                <div className="inv-history-top">
-                  <span className="inv-history-action">{entry.action.replaceAll('_', ' ')}</span>
-                  <span className="inv-muted">{new Date(entry.at).toLocaleString()}</span>
-                </div>
-                <p>{entry.description || '—'}</p>
-                <p className="inv-muted">
-                  {entry.module} · {entry.by}
-                  {entry.role ? ` (${entry.role})` : ''}
-                </p>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="inv-muted">No history recorded for this asset yet.</p>
-        )}
+        <ActivityHistory entries={history} empty="No history recorded for this asset yet." />
       </div>
 
       {!!asset.images?.length && (

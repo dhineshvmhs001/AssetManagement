@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const { query } = require('../config/db');
 const { JWT_SECRET } = require('../config/env');
 const { roleLabel } = require('../constants/roles');
+const { logActivity } = require('../lib/activity');
 
 const INVALID = 'Invalid email or password';
 
@@ -51,6 +52,14 @@ async function login(req, res) {
     return res.status(401).json({ ok: false, error: INVALID });
   }
 
+  await logActivity({
+    user,
+    module: 'Auth',
+    action: 'Login',
+    description: `Signed in as ${user.email}`,
+    ip: req.ip,
+  });
+
   res.json({
     ok: true,
     token: signToken(user, remember),
@@ -76,6 +85,13 @@ async function me(req, res) {
 }
 
 function logout(req, res) {
+  logActivity({
+    user: req.user,
+    module: 'Auth',
+    action: 'Logout',
+    description: `Signed out ${req.user?.email || ''}`.trim(),
+    ip: req.ip,
+  });
   res.json({ ok: true });
 }
 

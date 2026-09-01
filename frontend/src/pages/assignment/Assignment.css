@@ -51,7 +51,10 @@
 
 .asg-step-title h3 {
   margin: 0;
-  font-size: 0.9375rem;
+  font-size: var(--ds-fs-h2);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ds-text-deep);
 }
 
 .asg-step-title p {
@@ -319,7 +322,10 @@
 
 .asg-summary h3 {
   margin: 0;
-  font-size: 0.9375rem;
+  font-size: var(--ds-fs-h2);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ds-text-deep);
 }
 
 .asg-blank {

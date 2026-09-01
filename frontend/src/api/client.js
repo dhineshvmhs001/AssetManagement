@@ -1,7 +1,7 @@
 import { getToken, clearSession } from '../auth/session';
 import { trackRequestEnd, trackRequestStart } from '../ui/loading';
 
-const API_BASE = import.meta.env.VITE_API_URL || '/api';
+export const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 function shouldTrack(path, silent) {
   if (silent) {
@@ -91,4 +91,28 @@ export async function getBlobUrl(path) {
     return null;
   }
   return URL.createObjectURL(await res.blob());
+}
+
+export async function downloadFile(path) {
+  const token = getToken();
+  const res = await fetch(`${API_BASE}${path}`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    if (res.status === 401) {
+      clearSession();
+      window.dispatchEvent(new Event('asset-logout'));
+    }
+    return { ok: false, error: data.error || 'Could not download' };
+  }
+  // The server caps large exports; it says so in a header rather than handing
+  // back a short file that looks complete.
+  const limit = Number(res.headers.get('X-Export-Limit')) || 0;
+  return {
+    ok: true,
+    url: URL.createObjectURL(await res.blob()),
+    truncated: res.headers.get('X-Export-Truncated') === 'true',
+    limit,
+  };
 }

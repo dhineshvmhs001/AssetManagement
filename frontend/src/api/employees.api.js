@@ -35,6 +35,10 @@ export function getEmployee(code) {
   return get(`/employees/${encodeURIComponent(code)}`);
 }
 
+export function getEmployeeHistory(code) {
+  return get(`/employees/${encodeURIComponent(code)}/history`);
+}
+
 export function createEmployee(fields, files = {}) {
   return sendWithFiles(
     fields,

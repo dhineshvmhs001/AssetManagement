@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const ExcelJS = require('exceljs');
 const XLSX = require('xlsx');
 const { query } = require('../config/db');
-const { logActivity } = require('../lib/activity');
+const { logActivity, listEntityHistory } = require('../lib/activity');
 const {
   EMPLOYEE_ROOT,
   saveEmployeeUploads,
@@ -543,8 +543,11 @@ async function update(req, res) {
     await logActivity({
       user: req.user,
       module: 'Employee',
-      action: 'Update',
-      description: `Updated employee ${row.employee_code}`,
+      action: fields.status === 'INACTIVE' && row.status !== 'INACTIVE' ? 'Deactivate' : 'Update',
+      description:
+        fields.status === 'INACTIVE' && row.status !== 'INACTIVE'
+          ? `Deactivated employee ${row.employee_code}`
+          : `Updated employee ${row.employee_code}`,
       entityType: 'Employee',
       entityId: row.id,
       ip: req.ip,
@@ -977,4 +980,16 @@ async function template(_req, res) {
   }
 }
 
-module.exports = { list, create, getOne, update, file, options, importCsv, template };
+async function history(req, res) {
+  if (!canRead(req.user)) {
+    return res.status(403).json({ ok: false, error: 'Not allowed for this role' });
+  }
+  const row = await findByCode(String(req.params.code || '').trim());
+  if (!row) {
+    return res.status(404).json({ ok: false, error: 'Employee not found' });
+  }
+  const entries = await listEntityHistory('employee', row.id);
+  return res.json({ ok: true, employeeCode: row.employee_code, history: entries });
+}
+
+module.exports = { list, create, getOne, update, file, options, importCsv, template, history };

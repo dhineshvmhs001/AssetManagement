@@ -1,0 +1,204 @@
+.ds-daterange {
+  position: relative;
+  min-width: 0;
+  width: 100%;
+}
+
+/*
+ * The trigger deliberately matches .ds-select__button metric for metric —
+ * same padding, font and border. It used to be a two-line control, which made
+ * it ~11px taller than the selects beside it; .ds-filters bottom-aligns its
+ * children, so the "Date range" label floated above "Module" and "Activity"
+ * and the filter row looked untended.
+ */
+.ds-daterange__button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  padding: 7px 28px 7px 11px;
+  border: 1px solid var(--ds-field-border);
+  border-radius: var(--ds-r-input);
+  background: var(--ds-field-bg);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: var(--ds-fs-body);
+  text-align: left;
+  cursor: pointer;
+  transition: box-shadow var(--ds-dur) var(--ds-ease), border-color var(--ds-dur) var(--ds-ease);
+}
+
+.ds-daterange__button.has-clear {
+  padding-right: 48px;
+}
+
+.ds-daterange__button:focus-visible,
+.ds-daterange__button[aria-expanded='true'] {
+  outline: none;
+  border-color: var(--input-focus);
+  box-shadow: var(--ds-ring);
+}
+
+.ds-daterange__icon {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  color: var(--ds-primary);
+}
+
+.ds-daterange__name {
+  flex: none;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* The exact dates yield first when the field is narrow — the preset name is
+   the part that answers "what am I looking at". */
+.ds-daterange__dates {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: var(--ds-fs-help);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ds-daterange__caret {
+  position: absolute;
+  top: 50%;
+  right: 11px;
+  transform: translateY(-50%);
+  font-size: 9px;
+  color: var(--muted);
+  transition: transform var(--ds-dur) var(--ds-ease);
+}
+
+.ds-daterange__button[aria-expanded='true'] .ds-daterange__caret {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.ds-daterange__clear {
+  position: absolute;
+  top: 50%;
+  right: 28px;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--ds-r-pill);
+  background: transparent;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.ds-daterange__clear:hover,
+.ds-daterange__clear:focus-visible {
+  outline: none;
+  background: var(--ds-tint-14);
+  color: var(--ds-text-deep);
+}
+
+/* Height is capped from JS against the measured space. The body scrolls and
+   the footer stays put, so Apply is reachable even in the worst case. */
+.ds-daterange__pop {
+  position: absolute;
+  z-index: 50;
+  top: calc(100% + 6px);
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  max-width: calc(100vw - 24px);
+  border: 1px solid var(--ds-tint-18);
+  border-radius: var(--ds-r-card);
+  background: var(--card-bg);
+  box-shadow: var(--ds-card-shadow-lg);
+}
+
+.ds-daterange__pop--up {
+  top: auto;
+  bottom: calc(100% + 6px);
+}
+
+.ds-daterange__body {
+  min-height: 0;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.ds-daterange__presets {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.ds-daterange__preset {
+  padding: 7px 10px;
+  border: 1px solid var(--ds-tint-18);
+  border-radius: 10px;
+  background: var(--ds-field-bg);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: var(--ds-fs-help);
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--ds-dur) var(--ds-ease), border-color var(--ds-dur) var(--ds-ease);
+}
+
+.ds-daterange__preset:hover {
+  border-color: var(--ds-primary);
+  background: var(--ds-tint-10);
+}
+
+.ds-daterange__preset.is-on {
+  background: var(--ds-primary);
+  border-color: var(--ds-primary);
+  color: var(--ds-primary-ink);
+}
+
+/* Separates the presets from the shared calendar below them. */
+.ds-daterange__body .ds-cal {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--ds-tint-10);
+}
+
+.ds-daterange__summary {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 10px 0 0;
+  padding: 7px 10px;
+  border-radius: 10px;
+  background: var(--ds-tint-10);
+  font-size: var(--ds-fs-help);
+}
+
+.ds-daterange__summary-range {
+  font-weight: 700;
+  color: var(--ds-text-deep);
+}
+
+.ds-daterange__summary-count {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.ds-daterange__foot {
+  flex: none;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px solid var(--ds-tint-10);
+}

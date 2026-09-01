@@ -24,6 +24,7 @@ const EXPLICIT = {
   WITH_ASSET_TEAM: 'info',
   CLOSED: 'neutral',
   REJECTED: 'danger',
+  CANCELLED: 'neutral',
   APPROVED: 'success',
   // People and records
   ACTIVE: 'success',
@@ -80,6 +81,37 @@ const PRIORITY_TONES = {
   NORMAL: 'info',
   LOW: 'neutral',
 };
+
+// The activity log's verbs. Same rule as statuses: one action, one colour, so
+// "Reject" is never red on one screen and grey on the next.
+const ACTION_TONES = {
+  CREATE: 'success',
+  APPROVE: 'success',
+  ASSIGN: 'info',
+  UPDATE: 'info',
+  IMPORT: 'info',
+  UNASSIGN: 'warning',
+  STATUS_CHANGE: 'warning',
+  REJECT: 'danger',
+  ACKNOWLEDGE: 'success',
+  TRANSFER: 'info',
+  REPLACE: 'warning',
+  ALLOCATE: 'info',
+  CLOSE: 'neutral',
+  CANCEL: 'danger',
+  DEACTIVATE: 'warning',
+  PRE_CHECK: 'warning',
+  REPAIR: 'warning',
+  FINAL_CHECK: 'success',
+  EXPORT: 'neutral',
+  LOGIN: 'neutral',
+  LOGOUT: 'neutral',
+};
+
+export function actionTone(value) {
+  const key = String(value ?? '').trim().toUpperCase().replace(/[\s-]+/g, '_');
+  return ACTION_TONES[key] || 'neutral';
+}
 
 export function roleTone(value) {
   return ROLE_TONES[String(value ?? '').toUpperCase()] || 'neutral';

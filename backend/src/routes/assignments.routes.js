@@ -11,6 +11,7 @@ router.get('/options', assignmentsController.options);
 router.get('/', assignmentsController.list);
 router.post('/', optionalAssignmentFiles, assignmentsController.create);
 router.get('/:code/files/:kind/:stored', assignmentsController.file);
+router.post('/:code/ack', assignmentsController.acknowledge);
 router.post('/:code/return', assignmentsController.returnOne);
 
 module.exports = router;

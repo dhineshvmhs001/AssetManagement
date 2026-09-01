@@ -2,7 +2,8 @@ const crypto = require('crypto');
 const path = require('path');
 const QRCode = require('qrcode');
 const { query } = require('../config/db');
-const { logActivity } = require('../lib/activity');
+const { logActivity, listEntityHistory } = require('../lib/activity');
+const { istStamp } = require('../lib/time');
 const { ROOT, saveUploads, removeAssetUploads, parseStored, publicFiles } = require('../lib/uploads');
 const { badRequest, cleanAssetFields } = require('../lib/assetFields');
 const {
@@ -415,7 +416,7 @@ const EXPORT_FIELDS = [
   ['Created By', (a) => a.createdBy],
   // ISO, not the default Date toString — that renders as "Thu Aug 20 2026
   // 15:20:54 GMT+0530 (India Standard Time)" and no spreadsheet parses it.
-  ['Created At', (a) => (a.createdAt ? new Date(a.createdAt).toISOString() : '')],
+  ['Created At', (a) => (a.createdAt ? istStamp(a.createdAt) : '')],
 ];
 
 const EXPORT_LIMIT = 5000;
@@ -457,6 +458,7 @@ async function exportCsv(req, res) {
     action: 'ASSET_EXPORT',
     description: `Exported ${rows.length} assets`,
     entityType: 'asset',
+    ip: req.ip,
   });
 
   res.setHeader('Content-Type', 'text/csv; charset=utf-8');
@@ -478,29 +480,11 @@ async function history(req, res) {
     return res.status(404).json({ ok: false, error: 'Asset not found' });
   }
 
-  const result = await query(
-    `SELECT l.id, l.module, l.action, l.description, l.role, l.created_at,
-            u.name AS user_name, u.email AS user_email
-     FROM activity_log l
-     LEFT JOIN users u ON u.id = l.user_id
-     WHERE l.entity_type = 'asset' AND l.entity_id = $1
-     ORDER BY l.created_at DESC
-     LIMIT 100`,
-    [asset.rows[0].id],
-  );
-
+  const history = await listEntityHistory('asset', asset.rows[0].id);
   res.json({
     ok: true,
     assetCode: asset.rows[0].asset_code,
-    history: result.rows.map((row) => ({
-      id: row.id,
-      module: row.module,
-      action: row.action,
-      description: row.description,
-      role: row.role,
-      by: row.user_name || row.user_email || 'System',
-      at: row.created_at,
-    })),
+    history,
   });
 }
 
@@ -897,19 +881,39 @@ function template(_req, res) {
   });
 }
 
-function options(_req, res) {
-  res.json({
-    ok: true,
-    productionMode: PRODUCTION_MODE,
-    requiredFields: requiredFieldKeys(),
-    categories: CATEGORIES,
-    conditions: CONDITIONS,
-    assetTypes: ASSET_TYPES,
-    statuses: Object.keys(STATUS).map((key) => ({
-      value: key,
-      label: statusLabel(key),
-    })),
-  });
+async function options(_req, res) {
+  try {
+    const brands = await query(
+      `SELECT category, brand
+       FROM assets
+       WHERE brand IS NOT NULL AND btrim(brand) <> ''
+       GROUP BY category, brand
+       ORDER BY lower(brand)`,
+    );
+    const brandsByCategory = {};
+    brands.rows.forEach((row) => {
+      if (!brandsByCategory[row.category]) {
+        brandsByCategory[row.category] = [];
+      }
+      brandsByCategory[row.category].push(row.brand);
+    });
+    res.json({
+      ok: true,
+      productionMode: PRODUCTION_MODE,
+      requiredFields: requiredFieldKeys(),
+      categories: CATEGORIES,
+      conditions: CONDITIONS,
+      assetTypes: ASSET_TYPES,
+      brandsByCategory,
+      statuses: Object.keys(STATUS).map((key) => ({
+        value: key,
+        label: statusLabel(key),
+      })),
+    });
+  } catch (err) {
+    console.error('Asset options failed:', err);
+    res.status(500).json({ ok: false, error: 'Could not load options' });
+  }
 }
 
 module.exports = {

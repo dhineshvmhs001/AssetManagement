@@ -59,6 +59,7 @@
    * is the point. Override these tokens to rescale the whole library. ---- */
   --ds-mono: ui-monospace, 'SFMono-Regular', Consolas, monospace;
   --ds-fs-h1: 24px;
+  --ds-fs-h2: 16px;
   --ds-fs-card-h: 14px;
   --ds-fs-body: 13px;
   --ds-fs-label: 12px;

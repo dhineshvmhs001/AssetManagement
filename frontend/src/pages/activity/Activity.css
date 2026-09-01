@@ -1,0 +1,38 @@
+/*
+ * The activity log is one table, so this file only dresses the cells the
+ * design system has no opinion about: the two-line When and Who cells, and the
+ * free-text description that would otherwise set the column width for everyone.
+ */
+
+.act-when,
+.act-who {
+  display: grid;
+  gap: 1px;
+  line-height: 1.35;
+}
+
+.act-when {
+  white-space: nowrap;
+}
+
+.act-when strong,
+.act-who strong {
+  font-weight: 700;
+  color: var(--ds-text-deep);
+}
+
+.act-when span,
+.act-who span {
+  font-size: var(--ds-fs-help);
+  color: var(--muted);
+}
+
+/* Descriptions are free text and occasionally a paragraph. Two lines, then
+   ellipsis — the full text stays on the title attribute and in the CSV. */
+.act-desc {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-width: 46ch;
+}

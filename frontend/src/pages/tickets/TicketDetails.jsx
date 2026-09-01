@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { getTicket, getTicketFileUrl, decideTicket, dispatchTicket } from '../../api/tickets.api';
+import { getTicket, getTicketFileUrl, getTicketHistory, decideTicket, dispatchTicket, cancelTicket } from '../../api/tickets.api';
 import { useAuth } from '../../auth/AuthProvider';
 import { notify } from '../../ui/notify';
+import ActivityHistory from '../../components/common/ActivityHistory';
 
 function introFor(role) {
   if (role === 'MANAGER') {
@@ -27,6 +28,7 @@ export default function TicketDetails() {
   const [error, setError] = useState(null);
   const [fileUrls, setFileUrls] = useState({});
   const [busy, setBusy] = useState(false);
+  const [history, setHistory] = useState([]);
 
   useEffect(() => {
     getTicket(code).then((data) => {
@@ -35,6 +37,9 @@ export default function TicketDetails() {
         return;
       }
       setTicket(data.ticket);
+      getTicketHistory(code).then((res) => {
+        setHistory(res.ok ? res.history : []);
+      });
     });
   }, [code]);
 
@@ -80,6 +85,7 @@ export default function TicketDetails() {
     notify.success(
       action === 'approve' ? `${ticket.ticketCode} approved` : `${ticket.ticketCode} not approved`,
     );
+    refreshHistory();
   }
 
   async function sendToTeam() {
@@ -92,6 +98,26 @@ export default function TicketDetails() {
     }
     setTicket(data.ticket);
     notify.success(`${ticket.ticketCode} sent to Asset Team`);
+    refreshHistory();
+  }
+
+  async function cancel() {
+    setBusy(true);
+    const data = await cancelTicket(ticket.ticketCode);
+    setBusy(false);
+    if (!data.ok) {
+      notify.error(data.error || 'Could not cancel ticket');
+      return;
+    }
+    setTicket(data.ticket);
+    notify.success(`${ticket.ticketCode} cancelled`);
+    refreshHistory();
+  }
+
+  function refreshHistory() {
+    getTicketHistory(code).then((res) => {
+      setHistory(res.ok ? res.history : []);
+    });
   }
 
   if (error) {
@@ -130,6 +156,11 @@ export default function TicketDetails() {
             <Link className="btn primary" to={`/assignment?ticket=${encodeURIComponent(ticket.ticketCode)}`}>
               Assign assets
             </Link>
+          ) : null}
+          {ticket.canCancel ? (
+            <button type="button" className="btn ghost" disabled={busy} onClick={cancel}>
+              Cancel ticket
+            </button>
           ) : null}
           <Link className="btn ghost" to="/tickets">
             Back to list
@@ -235,6 +266,11 @@ export default function TicketDetails() {
             </dd>
           </div>
         </dl>
+      </div>
+
+      <div className="inv-card" style={{ marginTop: 14 }}>
+        <h3>History</h3>
+        <ActivityHistory entries={history} empty="No activity recorded for this ticket yet." />
       </div>
     </section>
   );

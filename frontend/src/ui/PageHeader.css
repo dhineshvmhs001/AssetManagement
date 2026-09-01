@@ -27,6 +27,15 @@
   gap: 8px;
 }
 
+/* Section under a page title. Field labels stay smaller than this. */
+.ds-section-title {
+  margin: 0 0 12px;
+  font-size: var(--ds-fs-h2);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ds-text-deep);
+}
+
 .ds-filters {
   display: flex;
   flex-wrap: wrap;

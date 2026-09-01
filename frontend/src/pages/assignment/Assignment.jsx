@@ -9,7 +9,7 @@ import {
   returnAssignment,
 } from '../../api/assignments.api';
 import { notify } from '../../ui/notify';
-import { Field, Input, Select, Textarea } from '../../ui';
+import { DatePicker, Field, Input, istDay, Select, Textarea } from '../../ui';
 import FilePicker from '../inventory/FilePicker';
 import '../inventory/Inventory.css';
 import './Assignment.css';
@@ -28,8 +28,7 @@ function initials(name) {
 }
 
 function today() {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  return istDay();
 }
 
 const EMPTY_FORM = {
@@ -414,10 +413,21 @@ export default function Assignment() {
             </header>
             <div className={`inv-form asg-step-body${ticket ? '' : ' is-locked'}`} inert={!ticket}>
               <Field label="Assignment date" required>
-                <Input type="date" value={form.assignedAt} onChange={(e) => set('assignedAt', e.target.value)} required />
+                <DatePicker
+                  value={form.assignedAt}
+                  onChange={(value) => set('assignedAt', value)}
+                  max={istDay()}
+                  required
+                  aria-label="Assigned on"
+                />
               </Field>
               <Field label="Expected return">
-                <Input type="date" value={form.expectedReturn} onChange={(e) => set('expectedReturn', e.target.value)} />
+                <DatePicker
+                  value={form.expectedReturn}
+                  onChange={(value) => set('expectedReturn', value)}
+                  min={form.assignedAt || undefined}
+                  aria-label="Expected return"
+                />
               </Field>
               <Field label="Condition at issue" required>
                 <Select value={form.condition} onChange={(e) => set('condition', e.target.value)} aria-label="Condition at issue">

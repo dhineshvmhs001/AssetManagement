@@ -1,4 +1,5 @@
 const { CATEGORIES, CONDITIONS, ASSET_TYPES } = require('../constants/assetStatus');
+const { istDay } = require('./time');
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -18,8 +19,10 @@ function pick(fields, ...keys) {
   return null;
 }
 
+// The app's "today" is the IST day. In UTC the boundary lands at 05:30 IST,
+// which rejects a purchase date entered this morning as being in the future.
 function today() {
-  return new Date().toISOString().slice(0, 10);
+  return istDay();
 }
 
 // Accepts any casing, returns the canonical spelling from the allow list.

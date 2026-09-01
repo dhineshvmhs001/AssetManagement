@@ -22,6 +22,9 @@ notes.txt
 logo/
 infra/
 doc/
+loader_files/
+loader_files.zip
+
 
 # Logs
 *.log

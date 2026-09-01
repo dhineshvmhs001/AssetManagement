@@ -35,7 +35,10 @@
 
 .inv-head h2 {
   margin: 0 0 4px;
-  font-size: 1.25rem;
+  font-size: var(--ds-fs-h1);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--ds-text-deep);
 }
 
 .inv-head p,
@@ -92,10 +95,16 @@
   margin-bottom: 14px;
 }
 
-.inv-search,
-.inv-toolbar select,
-.inv-form input:not([type='checkbox']):not([type='file']),
-.inv-form select {
+/*
+ * Only .inv-search is left here. This rule used to also match
+ * `.inv-form input` and `.inv-form select`, which at specificity 0-1-1 beat
+ * .ds-input at 0-1-0 — so every text and date field inside these forms was
+ * styled by this file while the Selects beside them (rendered as buttons)
+ * kept the design system's field styling. That is why the boxes and the
+ * dropdowns did not match. The form fields are all design-system components
+ * now, so they style themselves.
+ */
+.inv-search {
   height: 40px;
   border: 1px solid var(--card-line);
   border-radius: 10px;
@@ -140,7 +149,10 @@
 
 .inv-card h3 {
   margin: 0 0 12px;
-  font-size: 0.9375rem;
+  font-size: var(--ds-fs-h2);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ds-text-deep);
 }
 
 .inv-table {
@@ -325,8 +337,13 @@
   align-items: start;
 }
 
-.inv-form > .ds-field {
-  min-width: 0;
+.inv-form > .ds-section-title {
+  grid-column: 1 / -1;
+  margin: 12px 0 0;
+}
+
+.inv-form > .ds-section-title:first-of-type {
+  margin-top: 0;
 }
 
 .inv-form label {
@@ -336,7 +353,6 @@
 }
 
 .inv-form label input:not([type='checkbox']):not([type='file']),
-.inv-form label select,
 .inv-form label textarea {
   display: block;
   width: 100%;

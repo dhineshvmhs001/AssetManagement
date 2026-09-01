@@ -4,7 +4,7 @@ import { setNavGuard, clearNavGuard } from '../../keyboard/navGuard';
 import { getTicketOptions } from '../../api/tickets.api';
 import { listEmployees } from '../../api/employees.api';
 import FilePicker from '../inventory/FilePicker';
-import { Field, Input, Select, Textarea } from '../../ui';
+import { DatePicker, Field, Input, istDay, Select, Textarea } from '../../ui';
 
 const EMPTY_ITEM = { category: '', quantity: '1' };
 
@@ -226,7 +226,13 @@ export default function TicketForm({ busy, onSubmit, onCancel }) {
         </Select>
       </Field>
       <Field label="Need date" required={need('needDate')}>
-        <Input type="date" value={form.needDate} onChange={(e) => set('needDate', e.target.value)} required={need('needDate')} />
+        <DatePicker
+          value={form.needDate}
+          onChange={(value) => set('needDate', value)}
+          min={istDay()}
+          required={need('needDate')}
+          aria-label="Needed by"
+        />
       </Field>
       <Field label="Remarks" full>
         <Textarea value={form.remarks} onChange={(e) => set('remarks', e.target.value)} rows={3} />

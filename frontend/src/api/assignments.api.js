@@ -48,6 +48,10 @@ export function returnAssignment(code, fields) {
   return post(`/assignments/${encodeURIComponent(code)}/return`, fields);
 }
 
+export function acknowledgeAssignment(code) {
+  return post(`/assignments/${encodeURIComponent(code)}/ack`);
+}
+
 export function getAssignmentFileUrl(path) {
   return getBlobUrl(path);
 }

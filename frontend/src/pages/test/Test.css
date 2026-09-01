@@ -23,49 +23,134 @@
   color: var(--muted, #9ca3af);
 }
 
-.test-grid {
-  width: min(1080px, 100%);
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
+.test-password {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px !important;
+  font-size: 0.875rem;
 }
 
-.test-card {
-  position: relative;
-  display: grid;
-  justify-items: center;
-  gap: 8px;
-  width: 100%;
-  padding: 28px 16px 18px;
-  border-radius: 16px;
+.test-password code,
+.test-account-mail code {
+  padding: 2px 8px;
+  border-radius: 6px;
   background: var(--card-bg, #161616);
-  border: 1px solid var(--card-line, rgba(255, 255, 255, 0.06));
-  box-shadow: var(--card-shadow, none);
+  border: 1px solid var(--card-line, rgba(255, 255, 255, 0.08));
+  font-size: 0.8125rem;
+}
+
+.test-now {
+  margin-top: 10px !important;
+  font-size: 0.875rem;
+}
+
+.test-copy {
+  border: 0;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--rail-icon-bg, rgba(255, 255, 255, 0.08));
+  color: var(--ink, #e8e8e8);
   font: inherit;
-  color: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
   cursor: pointer;
 }
 
-.test-num {
-  position: absolute;
-  top: 12px;
-  left: 14px;
-  font-size: 0.85rem;
-  font-weight: 800;
-  color: var(--muted, #9ca3af);
+.test-accounts {
+  width: min(1080px, 100%);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
 }
 
-.test-card h2 {
+.test-account {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding: 18px 16px 16px;
+  border-radius: 16px;
+  background: var(--card-bg, #161616);
+  border: 1px solid var(--card-line, rgba(255, 255, 255, 0.06));
+  text-align: left;
+  cursor: pointer;
+}
+
+.test-account.is-on {
+  border-color: var(--accent, #d946ef);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent, #d946ef) 45%, transparent);
+}
+
+.test-account.is-focus,
+.test-account:focus-visible {
+  outline: 2px solid var(--accent, #d946ef);
+  outline-offset: 3px;
+  transform: translateY(-3px);
+}
+
+.test-account-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.test-account h2 {
   margin: 0;
-  font-size: 0.95rem;
-  font-weight: 650;
+  font-size: 1rem;
 }
 
-.test-stage {
-  height: 172px;
+.test-badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: color-mix(in srgb, var(--accent, #d946ef) 16%, transparent);
+  color: var(--accent, #d946ef);
+}
+
+.test-account-name {
+  margin: 0;
+  font-size: 0.8125rem;
+}
+
+.test-account-mail {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  min-width: 0;
+}
+
+.test-account-mail code {
+  min-width: 0;
   overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.test-account-sees {
+  margin: 0 0 6px;
+  color: var(--muted, #9ca3af);
+  font-size: 0.8125rem;
+}
+
+.test-account .btn-login {
   display: grid;
   place-items: center;
+  width: 100%;
+  margin-top: 6px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--accent, #d946ef);
+  color: var(--accent-ink, #fff);
+  font-weight: 700;
+}
+
+.test-account.is-focus .btn-login {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-ink, #fff) 35%, transparent);
 }
 
 .mail-test-form {
@@ -115,30 +200,3 @@
 .test-status.fail {
   color: #f87171;
 }
-
-/* ---------- card polish ---------- */
-
-.test-card {
-  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
-}
-
-.test-card:hover {
-  transform: translateY(-3px);
-  border-color: color-mix(in srgb, var(--accent, #d946ef) 35%, transparent);
-}
-
-.test-card.is-on {
-  border-color: var(--accent, #d946ef);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent, #d946ef) 45%, transparent);
-}
-
-.test-stage {
-  width: 100%;
-  border-radius: 14px;
-  background: radial-gradient(
-    circle at 50% 45%,
-    color-mix(in srgb, var(--accent, #d946ef) 9%, transparent),
-    transparent 68%
-  );
-}
-

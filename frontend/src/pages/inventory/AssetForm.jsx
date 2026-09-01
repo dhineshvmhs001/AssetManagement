@@ -4,7 +4,7 @@ import { getAssetOptions } from '../../api/assets.api';
 import { listVendors } from '../../api/vendors.api';
 import { setNavGuard, clearNavGuard } from '../../keyboard/navGuard';
 import FilePicker from './FilePicker';
-import { Field, Input, Select } from '../../ui';
+import { DatePicker, Field, Input, istDay, Select, SectionTitle } from '../../ui';
 
 export const EMPTY_ASSET = {
   category: 'Laptop',
@@ -29,6 +29,7 @@ const FALLBACK_OPTIONS = {
   assetTypes: ['Own'],
   requiredFields: ['category', 'brand', 'serialNumber'],
   productionMode: false,
+  brandsByCategory: {},
 };
 
 // Shared by Add asset and Edit asset. `existingFiles` are the ones already
@@ -91,7 +92,14 @@ export default function AssetForm({
   }, [dirty]);
 
   function set(key, value) {
-    setForm((prev) => ({ ...prev, [key]: value }));
+    setForm((prev) => {
+      if (key !== 'category') {
+        return { ...prev, [key]: value };
+      }
+      const brands = (options.brandsByCategory || {})[value] || [];
+      const keep = brands.some((brand) => brand.toLowerCase() === String(prev.brand || '').trim().toLowerCase());
+      return { ...prev, category: value, brand: keep ? prev.brand : '' };
+    });
   }
 
   function need(key) {
@@ -115,10 +123,18 @@ export default function AssetForm({
     }
   }
 
+  const categoryBrands = (options.brandsByCategory || {})[form.category] || [];
+  const brandChoices =
+    form.brand && !categoryBrands.some((brand) => brand.toLowerCase() === form.brand.trim().toLowerCase())
+      ? [form.brand, ...categoryBrands]
+      : categoryBrands;
+  const brandListId = `asset-brands-${String(form.category || 'all').replace(/\s+/g, '-')}`;
+
   return (
     <form className="inv-card inv-form" onSubmit={handleSubmit}>
       <p className="inv-note">After save, a QR / printable sticker is generated for the physical item.</p>
 
+      <SectionTitle>Identity</SectionTitle>
       {form.assetCode ? (
         <Field label="Asset code">
           <Input value={form.assetCode} disabled />
@@ -133,8 +149,24 @@ export default function AssetForm({
           ))}
         </Select>
       </Field>
-      <Field label="Brand" required={need('brand')}>
-        <Input value={form.brand} onChange={(e) => set('brand', e.target.value)} required={need('brand')} />
+      <Field
+        label="Brand"
+        required={need('brand')}
+        hint={brandChoices.length ? 'Pick a brand used in this category, or type a new one.' : 'Type the brand.'}
+      >
+        <Input
+          value={form.brand}
+          list={brandListId}
+          onChange={(e) => set('brand', e.target.value)}
+          required={need('brand')}
+          autoComplete="off"
+          aria-label="Brand"
+        />
+        <datalist id={brandListId}>
+          {brandChoices.map((item) => (
+            <option key={item} value={item} />
+          ))}
+        </datalist>
       </Field>
       <Field label="Model" required={need('model')}>
         <Input value={form.model} onChange={(e) => set('model', e.target.value)} required={need('model')} />
@@ -155,12 +187,32 @@ export default function AssetForm({
           ))}
         </Select>
       </Field>
+      <Field label="Location" required={need('location')}>
+        <Input value={form.location} onChange={(e) => set('location', e.target.value)} required={need('location')} />
+      </Field>
+      <Field label="Condition" required={need('condition')}>
+        <Select value={form.condition} onChange={(e) => set('condition', e.target.value)} aria-label="Condition">
+          {options.conditions.map((item) => (
+            <option key={item} value={item}>
+              {item}
+            </option>
+          ))}
+        </Select>
+      </Field>
+      {form.assetCode ? (
+        <Field label="Status">
+          <Input value={form.statusLabel || 'Available'} disabled />
+        </Field>
+      ) : null}
+
+      <SectionTitle>Purchase</SectionTitle>
       <Field label="Purchase date" required={need('purchaseDate')}>
-        <Input
-          type="date"
+        <DatePicker
           value={form.purchaseDate}
-          onChange={(e) => set('purchaseDate', e.target.value)}
+          onChange={(value) => set('purchaseDate', value)}
+          max={istDay()}
           required={need('purchaseDate')}
+          aria-label="Purchase date"
         />
       </Field>
       <Field label="Purchase cost" required={need('purchaseCost')}>
@@ -183,11 +235,13 @@ export default function AssetForm({
         />
       </Field>
       <Field label="Invoice date" required={need('invoiceDate')}>
-        <Input
-          type="date"
+        <DatePicker
           value={form.invoiceDate}
-          onChange={(e) => set('invoiceDate', e.target.value)}
+          onChange={(value) => set('invoiceDate', value)}
+          min={form.purchaseDate || undefined}
+          max={istDay()}
           required={need('invoiceDate')}
+          aria-label="Invoice date"
         />
       </Field>
       <Field label="Vendor" required={need('vendor')}>
@@ -208,40 +262,28 @@ export default function AssetForm({
           <Link to="/vendors/add">Add vendor</Link> first, then incoming stock can pick it.
         </p>
       ) : null}
-      <Field label="Location" required={need('location')}>
-        <Input value={form.location} onChange={(e) => set('location', e.target.value)} required={need('location')} />
-      </Field>
-      <Field label="Condition" required={need('condition')}>
-        <Select value={form.condition} onChange={(e) => set('condition', e.target.value)} aria-label="Condition">
-          {options.conditions.map((item) => (
-            <option key={item} value={item}>
-              {item}
-            </option>
-          ))}
-        </Select>
-      </Field>
-      {form.assetCode ? (
-        <Field label="Status">
-          <Input value={form.statusLabel || 'Available'} disabled />
-        </Field>
-      ) : null}
+
+      <SectionTitle>Warranty</SectionTitle>
       <Field label="Warranty start" required={need('warrantyStart')}>
-        <Input
-          type="date"
+        <DatePicker
           value={form.warrantyStart}
-          onChange={(e) => set('warrantyStart', e.target.value)}
+          onChange={(value) => set('warrantyStart', value)}
+          max={form.warrantyEnd || undefined}
           required={need('warrantyStart')}
+          aria-label="Warranty start"
         />
       </Field>
       <Field label="Warranty end" required={need('warrantyEnd')}>
-        <Input
-          type="date"
+        <DatePicker
           value={form.warrantyEnd}
-          onChange={(e) => set('warrantyEnd', e.target.value)}
+          onChange={(value) => set('warrantyEnd', value)}
+          min={form.warrantyStart || undefined}
           required={need('warrantyEnd')}
+          aria-label="Warranty end"
         />
       </Field>
 
+      <SectionTitle>Files</SectionTitle>
       <FilePicker
         label="Documents"
         hint="PDF, Word, or image. Up to 8 files, 8 MB each."
@@ -250,6 +292,7 @@ export default function AssetForm({
         onChange={setDocuments}
         required={need('documents')}
         alreadyStored={existingFiles.documents.length}
+        wide
       />
       <FilePicker
         label="Images"
@@ -260,6 +303,7 @@ export default function AssetForm({
         showPreview
         required={need('images')}
         alreadyStored={existingFiles.images.length}
+        wide
       />
 
       <div className="inv-form-actions">

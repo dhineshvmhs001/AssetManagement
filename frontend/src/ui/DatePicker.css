@@ -1,0 +1,124 @@
+.ds-datepick {
+  position: relative;
+  min-width: 0;
+  width: 100%;
+}
+
+/* Transparent, but the same box as the trigger and with real dimensions:
+   Chrome refuses to report on a control it cannot focus, so display:none or
+   visibility:hidden here would block submission with a console error instead
+   of showing a message. */
+.ds-datepick__native {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Metric for metric with .ds-input and .ds-select__button, so a form row of
+   mixed field types lines up. */
+.ds-datepick__button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  padding: 7px 28px 7px 11px;
+  border: 1px solid var(--ds-field-border);
+  border-radius: var(--ds-r-input);
+  background: var(--ds-field-bg);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: var(--ds-fs-body);
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: box-shadow var(--ds-dur) var(--ds-ease), border-color var(--ds-dur) var(--ds-ease);
+}
+
+.ds-datepick__button:focus-visible,
+.ds-datepick__button[aria-expanded='true'] {
+  outline: none;
+  border-color: var(--input-focus);
+  box-shadow: var(--ds-ring);
+}
+
+.ds-datepick__button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ds-datepick__icon {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  color: var(--ds-primary);
+}
+
+/* Unset reads as placeholder text, not as a value. */
+.ds-datepick__value {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ds-datepick__button.has-value .ds-datepick__value {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.ds-datepick__caret {
+  position: absolute;
+  top: 50%;
+  right: 11px;
+  transform: translateY(-50%);
+  font-size: 9px;
+  color: var(--muted);
+  transition: transform var(--ds-dur) var(--ds-ease);
+}
+
+.ds-datepick__button[aria-expanded='true'] .ds-datepick__caret {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.ds-datepick__pop {
+  position: absolute;
+  z-index: 50;
+  top: calc(100% + 6px);
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  width: 268px;
+  max-width: calc(100vw - 24px);
+  border: 1px solid var(--ds-tint-18);
+  border-radius: var(--ds-r-card);
+  background: var(--card-bg);
+  box-shadow: var(--ds-card-shadow-lg);
+}
+
+.ds-datepick__pop--up {
+  top: auto;
+  bottom: calc(100% + 6px);
+}
+
+.ds-datepick__body {
+  min-height: 0;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.ds-datepick__foot {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px solid var(--ds-tint-10);
+}

@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { getEmployee, getEmployeeFileUrl } from '../../api/employees.api';
+import { getEmployee, getEmployeeFileUrl, getEmployeeHistory } from '../../api/employees.api';
 import { getAssignmentFileUrl } from '../../api/assignments.api';
 import { listTickets } from '../../api/tickets.api';
+import ActivityHistory from '../../components/common/ActivityHistory';
 
 export default function EmployeeDetails() {
   const { code } = useParams();
@@ -10,6 +11,7 @@ export default function EmployeeDetails() {
   const [error, setError] = useState(null);
   const [fileUrls, setFileUrls] = useState({});
   const [tickets, setTickets] = useState([]);
+  const [history, setHistory] = useState([]);
 
   useEffect(() => {
     getEmployee(code).then((data) => {
@@ -22,6 +24,9 @@ export default function EmployeeDetails() {
         if (res.ok) {
           setTickets(res.tickets || []);
         }
+      });
+      getEmployeeHistory(code).then((res) => {
+        setHistory(res.ok ? res.history : []);
       });
     });
   }, [code]);
@@ -257,6 +262,11 @@ export default function EmployeeDetails() {
         ) : (
           <p className="inv-muted">None yet.</p>
         )}
+      </div>
+
+      <div className="inv-card">
+        <h3>History</h3>
+        <ActivityHistory entries={history} empty="No activity recorded for this employee yet." />
       </div>
     </section>
   );
